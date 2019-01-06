@@ -1,0 +1,251 @@
+import java_cup.runtime.*;
+
+action code 
+{:
+	String aux;
+:}
+
+parser code {:
+  @Override
+  public void report_error(String message, Object info){      // Syntax error handling message
+      Prints.error();
+      PLC.out.println("\tSyntax error: " + message);
+      Prints.halt();
+  }
+:}
+
+/*Terminales*/
+terminal String IDENT, NUM, TRUE, FALSE, INT, CHAR;
+terminal TYPEDEF, INTERR, DP, PYC, COMA;
+terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG;
+terminal IF, SWITCH, CASE, DEFAULT, BREAK;
+terminal PRINT;
+terminal MAS, MENOS, POR, DIV, MODULO, MENOSUNARIO; 
+terminal AP, CP, ALL, CLL;
+terminal OR, AND, NOT;
+terminal String DO, WHILE, ELSE;
+terminal DoubleTag FOR;
+
+/*No Terminales*/
+
+non terminal programa, sentencia_comp, lista_de_sent, sent, sentencia_simp;
+non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, lista_switch, opt_default, sent_for, for_var, sent_print;
+non terminal String list_declar_var, declar_tipo, tipo, exp, asig;
+non terminal Integer binary_op, relational_op;
+non terminal DoubleTag condicion;
+
+/*Precedencias*/
+
+precedence right ASIG, ELSE;
+precedence left INTERR, DP;
+precedence left OR, AND, NOT;
+precedence left MENOR, MAYOR, MENORIG, MAYORIG, IGUAL, DISTINTO;
+precedence left MAS, MENOS;
+precedence left POR, DIV, MODULO;
+precedence left AP, CP, ALL, CLL, MENOSUNARIO;
+
+/*Gramaticas*/
+
+start with lista_de_sent;
+
+lista_de_sent ::= lista_de_sent sent | sent;
+
+sent ::= sentencia_simp;
+
+sentencia_simp ::= PYC
+                | list_declar_var PYC
+                | declar_tipo PYC
+                | exp PYC
+                | sent_if
+                | sent_while
+                | sent_do_while
+                | sent_for
+                | sent_switch
+                | sent_print PYC
+                | ALL lista_de_sent CLL
+                ;
+
+tipo ::= INT:i {: RESULT = i; :}
+        | CHAR:c {: RESULT = c; :}
+        | IDENT:id {: RESULT = id; :}
+        ;
+
+list_declar_var ::= tipo IDENT | list_declar_var COMA IDENT;
+
+declar_tipo ::= TYPEDEF tipo:t IDENT:i {: Prints._typedef(t,i); :};
+
+asig ::= IDENT:i ASIG exp:e {: Prints.asig(i, e); RESULT = i; :};
+
+sent_if ::= IF AP condicion:c 
+            {:
+                Prints.label(c.getT());
+            :}
+                CP sent
+            {:
+                aux=c.getF();
+            :} 
+                else_if
+            ;
+else_if ::=  {: Prints.label(aux); :}
+        |   ELSE:tag
+        {: 
+            Prints._goto(tag);
+            Prints.label(aux); 
+        :}
+            sent {: Prints.label(tag); :}
+        ;
+
+/*sent_if ::= IF AP condicion:c 
+            {:
+                Prints.label(c.getT());
+                RESULT = GenTag.genTag();
+            :}
+                CP sent
+            {:
+                Prints._goto((String) RESULT);
+                Prints.label(c.getF());
+            :} 
+                else_if
+            {:
+                aux=c.getF();
+                Prints.label((String) RESULT);
+            :}
+            ;
+
+else_if ::= ELSE IF AP condicion:c CP
+            {:
+                Prints.label(c.getT());
+                RESULT = GenTag.genTag();
+            :}
+                sent
+            {:
+                Prints._goto((String) RESULT);
+                Prints.label(c.getF());
+            :} 
+                else_if
+            {:
+                Prints.label((String) RESULT);
+            :}
+                ELSE:tag
+            {: 
+                Prints._goto(tag);
+                Prints.label(aux); 
+            :}
+                sent {: Prints.label(tag); :}
+            |   {: Prints.label(aux); :}
+            ;*/
+
+sent_while ::=  WHILE:tag AP //tag comes from lexer
+            {:
+                Prints.label(tag);
+            :}
+                condicion:c CP
+            {:
+                Prints.label(c.getT());
+            :}
+                sent
+            {:
+                Prints._goto(tag);
+                Prints.label(c.getF()); // out of the loop
+            :}
+            ;
+
+sent_do_while ::=   DO:tag //tag comes from lexer
+                {:
+                    Prints.label(tag);
+                :}
+                    sent WHILE AP condicion:c CP PYC
+                {:
+                    Prints.label(c.getT());
+                    Prints._goto(tag);
+                    Prints.label(c.getF()); //out of the loop
+                :}
+                 ;
+
+for_var ::= IDENT:i {: RESULT = i; :}
+        |   asig:v {: RESULT = v; :}
+        ;
+
+sent_for ::= FOR:tag AP for_var PYC //tag comes from lexer
+            {:
+                Prints.label(tag.getT()); //check condition
+            :}
+            condicion:c PYC
+            {:
+                Prints.label(tag.getF()); //modify variable
+            :}
+            exp CP
+            {:
+                Prints._goto(tag.getT());
+                Prints.label(c.getT());
+            :}
+            sent
+            {:
+                Prints._goto(tag.getF());
+                Prints.label(c.getF()); //out of the loop
+            :}
+            ;
+
+sent_switch ::= SWITCH AP exp CP ALL lista_switch opt_default CLL;
+
+lista_switch ::= CASE NUM DP sent BREAK PYC
+            | lista_switch CASE NUM DP sent BREAK PYC
+            ;
+
+opt_default ::= DEFAULT DP sent:s BREAK PYC {:  :}
+            | {: RESULT = ""; :}
+            ;
+
+sent_print ::=  PRINT exp:e {: Prints._print(e); :}
+            ;
+
+exp ::=     exp:e1 binary_op:op exp:e2 {: RESULT = Prints.operate(e1, op, e2); :}
+            //| MENOS exp:e {: RESULT = Prints.operate("-1", Prints.POR, e); :} %prec MENOSUNARIO
+            |   MENOS exp:e {: RESULT = Prints.operate(null, Prints.MENOSUNARIO, e); :} %prec MENOSUNARIO
+            |   AP exp:e CP {: RESULT = e; :}
+            |   asig:a {: RESULT = a; :}
+            |   IDENT:i {: RESULT = i; :} //caracter
+            |   NUM:n	{: RESULT = n; :} //entero
+/*| MAS MAS IDENT:i {:  :}
+| IDENT:i MAS MAS {:  :}
+| MENOS MENOS IDENT:i {:  :}
+| IDENT:i MENOS MENOS {:  :}*/
+/*            |   condicion:c {: Prints.label(c.getT()); RESULT = GenTag.genTag(); :} INTERR 
+                exp:e1 {: RESULT = e1; :} DP exp:e2 {: RESULT = e2; :}*/
+            ;
+
+binary_op ::=   MAS {: RESULT = Prints.MAS; :}
+            |   MENOS {: RESULT = Prints.MENOS; :}
+            |   POR {: RESULT = Prints.POR; :}
+            |   DIV {: RESULT = Prints.DIV; :}
+            |   MODULO {: RESULT = Prints.MODULO; :}
+            ;
+
+condicion ::=   exp:e1 relational_op:op exp:e2{: RESULT = Prints.conditional(op, e1, e2); :}
+            |   condicion:c1 AND {: Prints.label(c1.getT()); :}
+                condicion:c2 {: 
+                Prints.label(c1.getF()); 
+                Prints._goto(c2.getF());
+                RESULT = c2;
+            :}
+            |   condicion:c1 OR {: Prints.label(c1.getF()); :}
+                condicion:c2 {:
+                Prints.label(c1.getT());
+                Prints._goto(c2.getT());
+                RESULT = c2;
+            :}
+            |   NOT condicion:c {: c.permute(); RESULT = c; :}
+            |   AP condicion:c CP {: RESULT = c; :}
+            /*|   TRUE:t {: RESULT = t; :}
+            |   FALSE:f {: RESULT = f; :}*/
+            ;
+
+relational_op ::=   MENOR {: RESULT = Prints.MENOR; :}
+                |   MENORIG {: RESULT = Prints.MENORIG; :}
+                |   MAYORIG {: RESULT = Prints.MAYORIG; :}
+                |   MAYOR {: RESULT = Prints.MAYOR; :}
+                |   IGUAL {: RESULT = Prints.IGUAL; :}
+                |   DISTINTO {: RESULT = Prints.DISTINTO; :}
+                ;
+
+
