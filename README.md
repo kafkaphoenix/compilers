@@ -12,19 +12,19 @@ Each project has 3 makefiles:
 - makefile_zip: to zip the compiled project
 
 # Project
-Each project has 3 main files: .flex, .cup and .java and additinals classes depending of the grammar
+Each project has 3 main files: .flex, .cup and .java and additionals classes depending of the grammar
 
 # Recommended books:
 
---> Compilers: Principles, Techniques, and Tools (2nd Edition) 
+- Compilers: Principles, Techniques, and Tools (2nd Edition) 
 	by Alfred V. Aho  (Author), Monica S. Lam  (Author), 
 	   Ravi Sethi  (Author), Jeffrey D. Ullman  (Author)
 
---> Engineering: A Compiler 2nd Edition
+- Engineering: A Compiler 2nd Edition
 	by Keith Cooper  (Author), Linda Torczon  (Author)
 
 # Documentation
 
-More Documentation about JFLEX in http://www.jflex.de/docu.html
-More Documentation about CUP in http://www2.cs.tum.edu/projects/cup/docs.php
+- More Documentation about JFLEX in http://www.jflex.de/docu.html
+- More Documentation about CUP in http://www2.cs.tum.edu/projects/cup/docs.php
 and about his intall and usual errors http://hackerdan.com/programing/using-java-cup/
