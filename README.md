@@ -1,9 +1,9 @@
 # Compilers
 
-grammars' directory has all the grammar these compilers use
+- grammars' directory has all the grammar these compilers use
 tests' directory has all the tests (feel free to suggest more examples!)
-I've provided jflex and cup .jars inside theirs respectives directories (see makefile section)
-See Documentation to know more about topics about compilers
+- I've provided jflex and cup .jars inside theirs respectives directories (see makefile section)
+- See Documentation to know more about topics about compilers
 
 # MakeFile
 Each project has 3 makefiles:
