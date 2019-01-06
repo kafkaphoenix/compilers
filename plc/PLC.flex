@@ -10,7 +10,7 @@ import java_cup.runtime.*;
 "false"             {return new Symbol(sym.FALSE);}
 [\ \n\t]            {}
 "?"                 {return new Symbol(sym.INTERR);}
-":"                 {return new Symbol(sym.DP);}
+":"                 {return new Symbol(sym.DP, GenTag.genTag());}
 ";"                 {return new Symbol(sym.PYC);}
 ","                 {return new Symbol(sym.COMA);}
 
@@ -36,6 +36,8 @@ import java_cup.runtime.*;
 
 "+"		            {return new Symbol(sym.MAS);}
 "-"		            {return new Symbol(sym.MENOS);}
+"++"		        {return new Symbol(sym.MASMAS);}
+"--"		        {return new Symbol(sym.MENOSMENOS);}
 "*"		            {return new Symbol(sym.POR);}
 "/"		            {return new Symbol(sym.DIV);}
 "%"                 {return new Symbol(sym.MODULO);}

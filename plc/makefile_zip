@@ -1,0 +1,6 @@
+default:
+	java -jar ../java-cup/java-cup-11b.jar PLC.cup
+	java -jar ../jflex/jflex-1.6.1.jar PLC.flex
+	javac -classpath ../java-cup/java-cup-11b-runtime.jar *.java
+	zip plc.zip PLC.flex PLC.cup *.java
+	rm *.class sym.java parser.java Yylex.java

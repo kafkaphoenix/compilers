@@ -17,7 +17,7 @@ parser code {:
 /*Terminales*/
 terminal String IDENT, NUM, TRUE, FALSE, INT, CHAR;
 terminal TYPEDEF, INTERR, DP, PYC, COMA;
-terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG;
+terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG, MASMAS, MENOSMENOS;
 terminal IF, SWITCH, CASE, DEFAULT, BREAK;
 terminal PRINT;
 terminal MAS, MENOS, POR, DIV, MODULO, MENOSUNARIO; 
@@ -36,13 +36,16 @@ non terminal DoubleTag condicion;
 
 /*Precedencias*/
 
-precedence right ASIG, ELSE;
-precedence left INTERR, DP;
+precedence left INTERR;
+precedence right ASIG;
+precedence left CP, CLL;
 precedence left OR, AND, NOT;
 precedence left MENOR, MAYOR, MENORIG, MAYORIG, IGUAL, DISTINTO;
 precedence left MAS, MENOS;
 precedence left POR, DIV, MODULO;
-precedence left AP, CP, ALL, CLL, MENOSUNARIO;
+precedence left MASMAS, MENOSMENOS;
+precedence left AP, ALL, MENOSUNARIO;
+precedence left ELSE, DP;
 
 /*Gramaticas*/
 
@@ -77,15 +80,15 @@ declar_tipo ::= TYPEDEF tipo:t IDENT:i {: Prints._typedef(t,i); :};
 asig ::= IDENT:i ASIG exp:e {: Prints.asig(i, e); RESULT = i; :};
 
 sent_if ::= IF AP condicion:c 
-            {:
-                Prints.label(c.getT());
-            :}
-                CP sent
-            {:
-                aux=c.getF();
-            :} 
-                else_if
-            ;
+        {:
+            Prints.label(c.getT());
+        :}
+            CP sent
+        {:
+            aux=c.getF();
+        :} 
+            else_if
+        ;
 else_if ::=  {: Prints.label(aux); :}
         |   ELSE:tag
         {: 
@@ -206,12 +209,33 @@ exp ::=     exp:e1 binary_op:op exp:e2 {: RESULT = Prints.operate(e1, op, e2); :
             |   asig:a {: RESULT = a; :}
             |   IDENT:i {: RESULT = i; :} //caracter
             |   NUM:n	{: RESULT = n; :} //entero
-/*| MAS MAS IDENT:i {:  :}
-| IDENT:i MAS MAS {:  :}
-| MENOS MENOS IDENT:i {:  :}
-| IDENT:i MENOS MENOS {:  :}*/
-/*            |   condicion:c {: Prints.label(c.getT()); RESULT = GenTag.genTag(); :} INTERR 
-                exp:e1 {: RESULT = e1; :} DP exp:e2 {: RESULT = e2; :}*/
+            |   MASMAS IDENT:i {: String expr = i+" + 1"; Prints.asig(i, expr); RESULT = i; :}
+            |   IDENT:i MASMAS 
+            {:
+                String temp = GenTag.genTemp();
+                Prints.asig(temp, i);
+                String expr = i+" + 1";
+                Prints.asig(i, expr);
+                RESULT = temp;
+            :}
+            |   MENOSMENOS IDENT:i
+            {: 
+                String expr = i+" - 1";
+                Prints.asig(i, expr);
+                RESULT = i;
+            :}
+            |   IDENT:i MENOSMENOS
+            {:  
+                String temp = GenTag.genTemp();
+                Prints.asig(temp, i);
+                String expr = i+" - 1";
+                Prints.asig(i, expr);
+                RESULT = temp; 
+            :}
+           /*|    condicion:c {: Prints.label(c.getT()); :} INTERR 
+                exp:e1
+                DP:tag {: Prints._goto(tag); Prints.label(c.getF()); :} // ELSE
+                exp:e2 {: Prints.label(tag); :} */
             ;
 
 binary_op ::=   MAS {: RESULT = Prints.MAS; :}

@@ -62,7 +62,11 @@ public class Prints {
             out.println("\t" + temp + " = " + e1 + " / " + e2 + ";");
             break;
           case MODULO:
-            out.println("\t" + temp + " = " + e1 + " % " + e2 + ";");
+            String t0 = GenTag.genTemp();
+            String t1 = GenTag.genTemp();
+            out.println("\t" + t0 + " = " + e1 + " / " + e2 + ";");
+            out.println("\t" + t1 + " = " + t0 + " * " + e2 + ";");
+            out.println("\t" + temp + " = " + e1 + " - " + e2 + ";");
             break;
           case MENOSUNARIO:
             out.println("\t" + temp + " = -" + e2 + ";");
