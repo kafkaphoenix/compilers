@@ -1,0 +1,9 @@
+typedef int a;
+b = 5;
+c = 10;
+a += b;
+b += c;
+c -= b;
+b = c;
+a *= b;
+b /= c;

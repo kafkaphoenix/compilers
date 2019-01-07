@@ -12,11 +12,19 @@ public class Prints {
     public static final int MENOSUNARIO = 6;
 
     public static final int IGUAL = 7;
-	public static final int MAYOR = 8;
-	public static final int MENOR = 9;
-	public static final int MAYORIG = 10;
-	public static final int MENORIG = 11;
-	public static final int DISTINTO = 12;
+    public static final int MAYOR = 8;
+    public static final int MENOR = 9;
+    public static final int MAYORIG = 10;
+    public static final int MENORIG = 11;
+    public static final int DISTINTO = 12;
+  
+    public static final int MASEQ = 13;
+    public static final int MENOSEQ = 14;
+    public static final int POREQ = 15;
+    public static final int DIVEQ = 16;
+
+    public static final int TRUE = 17;
+    public static final int FALSE = 18;
 
     public static void label(String l) {
         out.println(l + ":");
@@ -79,6 +87,27 @@ public class Prints {
         return temp;
     }
 
+    public static void operateEQ(String id, int oper, String e){
+      //todo comprobar tipo id
+      switch(oper) {
+        case MASEQ:
+          out.println("\t" + id + " = " + id + " + " + e + ";");
+          break;
+        case MENOSEQ:
+          out.println("\t" + id + " = " + id + " - " + e + ";");
+          break;
+        case POREQ:
+          out.println("\t" + id + " = " + id + " * " + e + ";");
+          break;
+        case DIVEQ:
+          out.println("\t" + id + " = " + id + " / " + e + ";");
+          break;
+        default:
+          out.println("Error: code generation failed with arguments: \tid:" + id + "\texp: " + e + "\toperation number: " + oper);
+          break;
+      }
+    }
+
     public static DoubleTag conditional (int oper, String e1, String e2) {
         DoubleTag tag = new DoubleTag();
     
@@ -107,6 +136,10 @@ public class Prints {
             out.println("\tif (" + e1 + " < " + e2 + ") goto " + tag.getF() + ";");
             out.println("\tgoto "+ tag.getT()+";");
             break;
+          case TRUE:
+          case FALSE:
+            out.println("\tif ( " + e1 + " ) goto " + tag.getT() + ";");
+            out.println("\tgoto "+ tag.getF()+";");
           default:
             out.println("Error: code generation failed with arguments: \texp1: " + e1 + "\texp2: " + "\tconditional number: " + oper);
             break;

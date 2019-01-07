@@ -1,29 +1,29 @@
 import java_cup.runtime.*;
 
-action code 
-{:
-	String aux;
+action code {:
+    String aux = "";
 :}
 
 parser code {:
   @Override
   public void report_error(String message, Object info){      // Syntax error handling message
       Prints.error();
-      PLC.out.println("\tSyntax error: " + message);
+      PLC.out.println("\tSyntax error: " + info + "\t" + message);
       Prints.halt();
   }
 :}
 
 /*Terminales*/
-terminal String IDENT, NUM, TRUE, FALSE, INT, CHAR;
-terminal TYPEDEF, INTERR, DP, PYC, COMA;
-terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG, MASMAS, MENOSMENOS;
-terminal IF, SWITCH, CASE, DEFAULT, BREAK;
+terminal String IDENT, NUM;
+terminal INT, CHAR, FLOAT;
+terminal TYPEDEF, PYC, COMA;
+terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG, TRUE, FALSE;
+terminal SWITCH, CASE, DEFAULT, BREAK;
 terminal PRINT;
-terminal MAS, MENOS, POR, DIV, MODULO, MENOSUNARIO; 
+terminal MAS, MENOS, POR, DIV, MODULO, POWER, MENOSUNARIO, MASMAS, MENOSMENOS, MASMASR, MENOSMENOSR, MASEQ, MENOSEQ, POREQ, DIVEQ; 
 terminal AP, CP, ALL, CLL;
 terminal OR, AND, NOT;
-terminal String DO, WHILE, ELSE;
+terminal String DO, WHILE, ELSE, ELSEIF, IF, INTERR, DP;
 terminal DoubleTag FOR;
 
 /*No Terminales*/
@@ -31,21 +31,25 @@ terminal DoubleTag FOR;
 non terminal programa, sentencia_comp, lista_de_sent, sent, sentencia_simp;
 non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, lista_switch, opt_default, sent_for, for_var, sent_print;
 non terminal String list_declar_var, declar_tipo, tipo, exp, asig;
-non terminal Integer binary_op, relational_op;
 non terminal DoubleTag condicion;
 
 /*Precedencias*/
 
-precedence left INTERR;
-precedence right ASIG;
+precedence right COMA;
+precedence right ASIG, MASEQ, MENOSEQ, POREQ, DIVEQ, DP;
+precedence right INTERR;
 precedence left CP, CLL;
-precedence left OR, AND, NOT;
-precedence left MENOR, MAYOR, MENORIG, MAYORIG, IGUAL, DISTINTO;
+precedence left OR;
+precedence left AND;
+precedence left IGUAL, DISTINTO;
+precedence left MAYOR, MAYORIG, MENOR, MENORIG;
 precedence left MAS, MENOS;
 precedence left POR, DIV, MODULO;
+precedence right POWER;
+precedence right NOT, MASMASR, MENOSMENOSR, MENOSUNARIO;
 precedence left MASMAS, MENOSMENOS;
-precedence left AP, ALL, MENOSUNARIO;
-precedence left ELSE, DP;
+precedence right AP, ALL;
+precedence left ELSEIF, ELSE;
 
 /*Gramaticas*/
 
@@ -68,8 +72,9 @@ sentencia_simp ::= PYC
                 | ALL lista_de_sent CLL
                 ;
 
-tipo ::= INT:i {: RESULT = i; :}
-        | CHAR:c {: RESULT = c; :}
+tipo ::= INT:i {: RESULT = "int"; :}
+        | CHAR:c {: RESULT = "char"; :}
+        | FLOAT:f {: RESULT = "float"; :}
         | IDENT:id {: RESULT = id; :}
         ;
 
@@ -79,11 +84,11 @@ declar_tipo ::= TYPEDEF tipo:t IDENT:i {: Prints._typedef(t,i); :};
 
 asig ::= IDENT:i ASIG exp:e {: Prints.asig(i, e); RESULT = i; :};
 
-sent_if ::= IF AP condicion:c 
+sent_if ::= IF AP condicion:c CP
         {:
             Prints.label(c.getT());
         :}
-            CP sent
+            sent
         {:
             aux=c.getF();
         :} 
@@ -97,46 +102,6 @@ else_if ::=  {: Prints.label(aux); :}
         :}
             sent {: Prints.label(tag); :}
         ;
-
-/*sent_if ::= IF AP condicion:c 
-            {:
-                Prints.label(c.getT());
-                RESULT = GenTag.genTag();
-            :}
-                CP sent
-            {:
-                Prints._goto((String) RESULT);
-                Prints.label(c.getF());
-            :} 
-                else_if
-            {:
-                aux=c.getF();
-                Prints.label((String) RESULT);
-            :}
-            ;
-
-else_if ::= ELSE IF AP condicion:c CP
-            {:
-                Prints.label(c.getT());
-                RESULT = GenTag.genTag();
-            :}
-                sent
-            {:
-                Prints._goto((String) RESULT);
-                Prints.label(c.getF());
-            :} 
-                else_if
-            {:
-                Prints.label((String) RESULT);
-            :}
-                ELSE:tag
-            {: 
-                Prints._goto(tag);
-                Prints.label(aux); 
-            :}
-                sent {: Prints.label(tag); :}
-            |   {: Prints.label(aux); :}
-            ;*/
 
 sent_while ::=  WHILE:tag AP //tag comes from lexer
             {:
@@ -199,53 +164,74 @@ opt_default ::= DEFAULT DP sent:s BREAK PYC {:  :}
             | {: RESULT = ""; :}
             ;
 
-sent_print ::=  PRINT exp:e {: Prints._print(e); :}
-            ;
+sent_print ::=  PRINT exp:e {: Prints._print(e); :};
 
-exp ::=     exp:e1 binary_op:op exp:e2 {: RESULT = Prints.operate(e1, op, e2); :}
-            //| MENOS exp:e {: RESULT = Prints.operate("-1", Prints.POR, e); :} %prec MENOSUNARIO
-            |   MENOS exp:e {: RESULT = Prints.operate(null, Prints.MENOSUNARIO, e); :} %prec MENOSUNARIO
-            |   AP exp:e CP {: RESULT = e; :}
-            |   asig:a {: RESULT = a; :}
-            |   IDENT:i {: RESULT = i; :} //caracter
-            |   NUM:n	{: RESULT = n; :} //entero
-            |   MASMAS IDENT:i {: String expr = i+" + 1"; Prints.asig(i, expr); RESULT = i; :}
-            |   IDENT:i MASMAS 
-            {:
-                String temp = GenTag.genTemp();
-                Prints.asig(temp, i);
-                String expr = i+" + 1";
-                Prints.asig(i, expr);
-                RESULT = temp;
-            :}
-            |   MENOSMENOS IDENT:i
+exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
+        |   exp:e1 MENOS exp:e2 {: RESULT = Prints.operate(e1, Prints.MENOS, e2); :}
+        |   exp:e1 POR exp:e2 {: RESULT = Prints.operate(e1, Prints.POR, e2); :}
+        |   exp:e1 DIV exp:e2 {: RESULT = Prints.operate(e1, Prints.DIV, e2); :}
+        |   exp:e1 MODULO exp:e2 {: RESULT = Prints.operate(e1, Prints.MODULO, e2); :}
+        |   IDENT:i MASEQ exp:e {: Prints.operateEQ(i, Prints.MASEQ, e); RESULT = i; :}
+        |   IDENT:i MENOSEQ exp:e {: Prints.operateEQ(i, Prints.MENOSEQ, e); RESULT = i; :}
+        |   IDENT:i POREQ exp:e {: Prints.operateEQ(i, Prints.POREQ, e); RESULT = i; :}
+        |   IDENT:i DIVEQ exp:e {: Prints.operateEQ(i, Prints.DIVEQ, e); RESULT = i; :}
+        |   MENOS exp:e {: RESULT = Prints.operate(null, Prints.MENOSUNARIO, e); :} %prec MENOSUNARIO
+        |   AP exp:e CP {: RESULT = e; :}
+        |   asig:a {: RESULT = a; :}
+        |   IDENT:i {: RESULT = i; :} //caracter
+        |   NUM:n	{: RESULT = n; :} //entero
+        |   MASMAS IDENT:i
+        {:
+            String expr = i+" + 1";
+            Prints.asig(i, expr);
+            RESULT = i;
+        :} %prec MASMASR
+        |   IDENT:i MASMAS 
+        {:
+            String temp = GenTag.genTemp();
+            Prints.asig(temp, i);
+            String expr = i+" + 1";
+            Prints.asig(i, expr);
+            RESULT = temp;
+        :}
+        |   MENOSMENOS IDENT:i
+        {: 
+            String expr = i+" - 1";
+            Prints.asig(i, expr);
+            RESULT = i;
+        :} %prec MENOSMENOSR
+        |   IDENT:i MENOSMENOS
+        {:  
+            String temp = GenTag.genTemp();
+            Prints.asig(temp, i);
+            String expr = i+" - 1";
+            Prints.asig(i, expr);
+            RESULT = temp; 
+        :}
+        /*|   condicion:c INTERR:tag
             {: 
-                String expr = i+" - 1";
-                Prints.asig(i, expr);
-                RESULT = i;
+                Prints.label(c.getT());
             :}
-            |   IDENT:i MENOSMENOS
+                exp:e1 DP:tag2
             {:  
-                String temp = GenTag.genTemp();
-                Prints.asig(temp, i);
-                String expr = i+" - 1";
-                Prints.asig(i, expr);
-                RESULT = temp; 
+                Prints.asig(tag, e1);
+                Prints._goto(tag2);
+                Prints.label(c.getF());
             :}
-           /*|    condicion:c {: Prints.label(c.getT()); :} INTERR 
-                exp:e1
-                DP:tag {: Prints._goto(tag); Prints.label(c.getF()); :} // ELSE
-                exp:e2 {: Prints.label(tag); :} */
-            ;
+                exp:e2
+            {:
+                Prints.asig(tag, e2);
+                Prints.label(tag2);
+                RESULT = tag;
+            :}*/
+        ;
 
-binary_op ::=   MAS {: RESULT = Prints.MAS; :}
-            |   MENOS {: RESULT = Prints.MENOS; :}
-            |   POR {: RESULT = Prints.POR; :}
-            |   DIV {: RESULT = Prints.DIV; :}
-            |   MODULO {: RESULT = Prints.MODULO; :}
-            ;
-
-condicion ::=   exp:e1 relational_op:op exp:e2{: RESULT = Prints.conditional(op, e1, e2); :}
+condicion ::=   exp:e1 IGUAL exp:e2 {: RESULT = Prints.conditional(Prints.IGUAL, e1, e2); :}
+            |   exp:e1 DISTINTO exp:e2 {: RESULT = Prints.conditional(Prints.DISTINTO, e1, e2); :}
+            |   exp:e1 MENOR exp:e2 {: RESULT = Prints.conditional(Prints.MENOR, e1, e2); :}
+            |   exp:e1 MENORIG exp:e2 {: RESULT = Prints.conditional(Prints.MENORIG, e1, e2); :}
+            |   exp:e1 MAYOR exp:e2 {: RESULT = Prints.conditional(Prints.MAYOR, e1, e2); :}
+            |   exp:e1 MAYORIG exp:e2 {: RESULT = Prints.conditional(Prints.MAYORIG, e1, e2); :}
             |   condicion:c1 AND {: Prints.label(c1.getT()); :}
                 condicion:c2 {: 
                 Prints.label(c1.getF()); 
@@ -260,16 +246,8 @@ condicion ::=   exp:e1 relational_op:op exp:e2{: RESULT = Prints.conditional(op,
             :}
             |   NOT condicion:c {: c.permute(); RESULT = c; :}
             |   AP condicion:c CP {: RESULT = c; :}
-            /*|   TRUE:t {: RESULT = t; :}
-            |   FALSE:f {: RESULT = f; :}*/
+            |   TRUE {: RESULT = Prints.conditional(Prints.TRUE, "true", null); :}
+            |   FALSE {: RESULT = Prints.conditional(Prints.FALSE, "false", null); :}
             ;
-
-relational_op ::=   MENOR {: RESULT = Prints.MENOR; :}
-                |   MENORIG {: RESULT = Prints.MENORIG; :}
-                |   MAYORIG {: RESULT = Prints.MAYORIG; :}
-                |   MAYOR {: RESULT = Prints.MAYOR; :}
-                |   IGUAL {: RESULT = Prints.IGUAL; :}
-                |   DISTINTO {: RESULT = Prints.DISTINTO; :}
-                ;
 
 
