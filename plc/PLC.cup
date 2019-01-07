@@ -122,12 +122,12 @@ sent_do_while ::=   DO:tag //tag comes from lexer
                 {:
                     Prints.label(tag);
                 :}
-                    sent WHILE AP condicion:c CP PYC
+                    sent WHILE AP condicion:c
                 {:
                     Prints.label(c.getT());
                     Prints._goto(tag);
                     Prints.label(c.getF()); //out of the loop
-                :}
+                :} CP PYC
                  ;
 
 for_var ::= IDENT:i {: RESULT = i; :}
@@ -208,22 +208,20 @@ exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
             Prints.asig(i, expr);
             RESULT = temp; 
         :}
-        /*|   condicion:c INTERR:tag
+        |   condicion:c INTERR:tag
             {: 
                 Prints.label(c.getT());
             :}
                 exp:e1 DP:tag2
             {:  
-                Prints.asig(tag, e1);
                 Prints._goto(tag2);
                 Prints.label(c.getF());
             :}
                 exp:e2
             {:
-                Prints.asig(tag, e2);
                 Prints.label(tag2);
                 RESULT = tag;
-            :}*/
+            :}
         ;
 
 condicion ::=   exp:e1 IGUAL exp:e2 {: RESULT = Prints.conditional(Prints.IGUAL, e1, e2); :}
