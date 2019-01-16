@@ -1,0 +1,18 @@
+	x = 1;
+	y = 2;
+	z = 3;
+	y = y + z;
+	x = x * y;
+	z = z + x;
+	y = y - z;
+	x = x * y;
+	t0 = y / z;
+	t1 = t0 * z;
+	y = y - t1;
+	x = x / y;
+	t2 = x * y;
+	t3 = t2 * z;
+	t4 = t3 + x;
+	t5 = t4 + y;
+	t6 = t5 + z;
+	print t6;

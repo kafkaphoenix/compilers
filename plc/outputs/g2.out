@@ -1,0 +1,29 @@
+label0:
+label1:
+label2:
+	$t0 = suma + a;
+	$t1 = $t0 + b;
+	$t2 = $t1 + c;
+	suma = $t2;
+	$t3 = c + 1;
+	c = $t3;
+	if (c < 10) goto label4;
+	goto label5;
+label4:
+	goto label2;
+label5:
+	$t4 = b + 1;
+	b = $t4;
+	if (b < 10) goto label7;
+	goto label8;
+label7:
+	goto label1;
+label8:
+	$t5 = a + 1;
+	a = $t5;
+	if (a < 10) goto label10;
+	goto label11;
+label10:
+	goto label0;
+label11:
+	print suma;

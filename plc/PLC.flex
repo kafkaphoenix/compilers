@@ -33,7 +33,7 @@ import java_cup.runtime.*;
 ">=" 	            {return new Symbol(sym.MAYORIG);}
 "<="		        {return new Symbol(sym.MENORIG);}
 
-"if"		        {return new Symbol(sym.IF, GenTag.genTag());}
+"if"		        {return new Symbol(sym.IF);}
 "elseif"		    {return new Symbol(sym.ELSEIF, GenTag.genTag());}
 "else"		        {return new Symbol(sym.ELSE, GenTag.genTag());}
 "for"		        {return new Symbol(sym.FOR, new DoubleTag());}
@@ -57,6 +57,7 @@ import java_cup.runtime.*;
 "-="                {return new Symbol(sym.MENOSEQ);}
 "*="                {return new Symbol(sym.POREQ);}
 "/="                {return new Symbol(sym.DIVEQ);}
+"%="                {return new Symbol(sym.MODEQ);}
 
 "("                 {return new Symbol(sym.AP);}
 ")"                 {return new Symbol(sym.CP);}

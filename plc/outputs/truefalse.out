@@ -1,0 +1,10 @@
+	a = 5;
+	b = 3;
+	if ( false ) goto label1;
+	goto label0;
+label0:
+	print a;
+	goto label2;
+label1:
+	print b;
+label2:

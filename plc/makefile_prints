@@ -2,24 +2,25 @@ default:
 	java -jar ../java-cup/java-cup-11b.jar PLC.cup
 	java -jar ../jflex/jflex-1.6.1.jar PLC.flex
 	javac -classpath ../java-cup/java-cup-11b-runtime.jar *.java
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a1.pl > a1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a0.pl > a0.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a2.pl > a2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/b1.pl > b1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/b2.pl > b2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/c1.pl > c1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/c2.pl > c2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/d1.pl > d1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/d2.pl > d2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/e1.pl > e1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/e2.pl > e2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/g1.pl > g1.out
-	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/g2.pl > g2.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/h1.pl > h1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/h2.pl > h2.out
-	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/ter1.pl > ter1.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/++--.pl > ++--.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/+=.pl > +=.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/mod.pl > mod.out
-	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/truefalse.pl > truefalse.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a1.pl > ./outputs/a1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a0.pl > ./outputs/a0.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/a2.pl > ./outputs/a2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/b1.pl > ./outputs/b1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/b2.pl > ./outputs/b2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/c1.pl > ./outputs/c1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/c2.pl > ./outputs/c2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/d1.pl > ./outputs/d1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/d2.pl > ./outputs/d2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/e1.pl > ./outputs/e1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/e2.pl > ./outputs/e2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/g1.pl > ./outputs/g1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/g2.pl > ./outputs/g2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/h1.pl > ./outputs/h1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/h2.pl > ./outputs/h2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/ter1.pl > ./outputs/ter1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/++--.pl > ./outputs/++--.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/+=.pl > ./outputs/+=.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/mod.pl > ./outputs/mod.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/truefalse.pl > ./outputs/truefalse.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLC ../tests/plc/prueba.pl > ./outputs/prueba.out
 	rm *.class sym.java parser.java Yylex.java

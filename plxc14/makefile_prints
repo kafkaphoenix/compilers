@@ -1,0 +1,72 @@
+default:
+	java -jar ../java-cup/java-cup-11b.jar PLXC.cup
+	java -jar ../jflex/jflex-1.6.1.jar PLXC.flex
+	javac -classpath ../java-cup/java-cup-11b-runtime.jar *.java
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/cero.plx > ./outputs/cero.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/coment1.plx > ./outputs/coment1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/coment2.plx > ./outputs/coment2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/coment3.plx > ./outputs/coment3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/coment4.plx > ./outputs/coment4.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/coment5.plx > ./outputs/coment5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/masigual1.plx > ./outputs/masigual1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/masigual2.plx > ./outputs/masigual2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/masigual4.plx > ./outputs/masigual4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/masigual5.plx > ./outputs/masigual5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat1.plx > ./outputs/mat1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat2.plx > ./outputs/mat2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat3.plx > ./outputs/mat3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat4.plx > ./outputs/mat4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat4_c.plx > ./outputs/mat4_c.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat5.plx > ./outputs/mat5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mat5_c.plx > ./outputs/mat5_c.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matasig1.plx > ./outputs/matasig1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matasig2.plx > ./outputs/matasig2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matasig3.plx > ./outputs/matasig3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matasig4.plx > ./outputs/matasig4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matasig5.plx > ./outputs/matasig5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matini1.plx > ./outputs/matini1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matini2.plx > ./outputs/matini2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matini3.plx > ./outputs/matini3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matini4.plx > ./outputs/matini4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matini5.plx > ./outputs/matini5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti1.plx > ./outputs/matinimulti1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti2.plx > ./outputs/matinimulti2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti3.plx > ./outputs/matinimulti3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti4.plx > ./outputs/matinimulti4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti5.plx > ./outputs/matinimulti5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinimulti6.plx > ./outputs/matinimulti6.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinivar1.plx > ./outputs/matinivar1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinivar2.plx > ./outputs/matinivar2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinivar3.plx > ./outputs/matinivar3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matinivar4.plx > ./outputs/matinivar4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmulti1.plx > ./outputs/matmulti1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmulti2.plx > ./outputs/matmulti2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmulti3.plx > ./outputs/matmulti3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmulti4.plx > ./outputs/matmulti4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmulti5.plx > ./outputs/matmulti5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmultiasig1.plx > ./outputs/matmultiasig1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmultiasig2.plx > ./outputs/matmultiasig2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmultiasig3.plx > ./outputs/matmultiasig3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/matmultiasig4.plx > ./outputs/matmultiasig4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/testfor1.plx > ./outputs/testfor1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/testfor2.plx > ./outputs/testfor2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/testfor3.plx > ./outputs/testfor3.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/testfor4.plx > ./outputs/testfor4.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/testfor5.plx > ./outputs/testfor5.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mod1.plx > ./outputs/mod1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/mod2.plx > ./outputs/mod2.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/incre1.plx > ./outputs/incre1.out
+	#java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/incre2.plx > ./outputs/incre2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/incre3.plx > ./outputs/incre3.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/no_declarada.plx > ./outputs/no_declarada.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/integra1.plx > ./outputs/integra1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/integra2.plx > ./outputs/integra2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/integra3.plx > ./outputs/integra3.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/integra4.plx > ./outputs/integra4.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/ambito1.plx > ./outputs/ambito1.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/ambito2.plx > ./outputs/ambito2.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/ambito3.plx > ./outputs/ambito3.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/ambito4.plx > ./outputs/ambito4.out
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc/elseif.plx > ./outputs/elseif.out
+	rm *.class sym.java parser.java Yylex.java
+

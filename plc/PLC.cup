@@ -18,37 +18,36 @@ terminal String IDENT, NUM;
 terminal INT, CHAR, FLOAT;
 terminal TYPEDEF, PYC, COMA;
 terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG, TRUE, FALSE;
-terminal SWITCH, CASE, DEFAULT, BREAK;
+terminal SWITCH, CASE, DEFAULT, BREAK, IF;
 terminal PRINT;
-terminal MAS, MENOS, POR, DIV, MODULO, POWER, MENOSUNARIO, MASMAS, MENOSMENOS, MASMASR, MENOSMENOSR, MASEQ, MENOSEQ, POREQ, DIVEQ; 
+terminal MAS, MENOS, POR, DIV, MODULO, POWER, MENOSUNARIO, MASMAS, MENOSMENOS, MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ; 
 terminal AP, CP, ALL, CLL;
 terminal OR, AND, NOT;
-terminal String DO, WHILE, ELSE, ELSEIF, IF, INTERR, DP;
+terminal String DO, WHILE, ELSE, ELSEIF, INTERR, DP;
 terminal DoubleTag FOR;
 
 /*No Terminales*/
 
-non terminal programa, sentencia_comp, lista_de_sent, sent, sentencia_simp;
-non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, lista_switch, opt_default, sent_for, for_var, sent_print;
+non terminal lista_de_sent, sent;
+non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, lista_switch, opt_default, sent_for, for_var, sent_print, switch_var;
 non terminal String list_declar_var, declar_tipo, tipo, exp, asig;
 non terminal DoubleTag condicion;
 
 /*Precedencias*/
 
-precedence right COMA;
-precedence right ASIG, MASEQ, MENOSEQ, POREQ, DIVEQ, DP;
+precedence left COMA;
 precedence right INTERR;
-precedence left CP, CLL;
 precedence left OR;
 precedence left AND;
-precedence left IGUAL, DISTINTO;
 precedence left MAYOR, MAYORIG, MENOR, MENORIG;
+precedence left IGUAL, DISTINTO;
+precedence right MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ, ASIG;
 precedence left MAS, MENOS;
-precedence left POR, DIV, MODULO;
+precedence left POR, DIV;
+precedence left MODULO;
 precedence right POWER;
-precedence right NOT, MASMASR, MENOSMENOSR, MENOSUNARIO;
+precedence left NOT, MENOSUNARIO;
 precedence left MASMAS, MENOSMENOS;
-precedence right AP, ALL;
 precedence left ELSEIF, ELSE;
 
 /*Gramaticas*/
@@ -57,9 +56,7 @@ start with lista_de_sent;
 
 lista_de_sent ::= lista_de_sent sent | sent;
 
-sent ::= sentencia_simp;
-
-sentencia_simp ::= PYC
+sent ::= PYC
                 | list_declar_var PYC
                 | declar_tipo PYC
                 | exp PYC
@@ -94,7 +91,7 @@ sent_if ::= IF AP condicion:c CP
         :} 
             else_if
         ;
-else_if ::=  {: Prints.label(aux); :}
+else_if ::=  {: Prints.label(aux); :} %prec COMA
         |   ELSE:tag
         {: 
             Prints._goto(tag);
@@ -136,25 +133,30 @@ for_var ::= IDENT:i {: RESULT = i; :}
 
 sent_for ::= FOR:tag AP for_var PYC //tag comes from lexer
             {:
-                Prints.label(tag.getT()); //check condition
+                Prints.label(tag.getT()); //check condition label
             :}
-            condicion:c PYC
+            condicion:c PYC //if expression
             {:
-                Prints.label(tag.getF()); //modify variable
+                Prints.label(tag.getF()); //modify variable label
             :}
-            exp CP
+            exp CP //modify variable expression
             {:
-                Prints._goto(tag.getT());
-                Prints.label(c.getT());
+                Prints._goto(tag.getT()); //return to check condition
+                Prints.label(c.getT()); //true condition label
             :}
-            sent
+            sent //true condition expression
             {:
-                Prints._goto(tag.getF());
+                Prints._goto(tag.getF()); //go to incremment
                 Prints.label(c.getF()); //out of the loop
             :}
             ;
+                
+           
+switch_var ::= IDENT:i {: RESULT = i; :}
+        |   asig:v {: RESULT = v; :}
+        ;    
 
-sent_switch ::= SWITCH AP exp CP ALL lista_switch opt_default CLL;
+sent_switch ::= SWITCH AP switch_var CP ALL lista_switch opt_default CLL;
 
 lista_switch ::= CASE NUM DP sent BREAK PYC
             | lista_switch CASE NUM DP sent BREAK PYC
@@ -185,7 +187,7 @@ exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
             String expr = i+" + 1";
             Prints.asig(i, expr);
             RESULT = i;
-        :} %prec MASMASR
+        :} 
         |   IDENT:i MASMAS 
         {:
             String temp = GenTag.genTemp();
@@ -199,7 +201,7 @@ exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
             String expr = i+" - 1";
             Prints.asig(i, expr);
             RESULT = i;
-        :} %prec MENOSMENOSR
+        :} 
         |   IDENT:i MENOSMENOS
         {:  
             String temp = GenTag.genTemp();
@@ -208,7 +210,7 @@ exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
             Prints.asig(i, expr);
             RESULT = temp; 
         :}
-        /*|   condicion:c INTERR:tag
+        |   condicion:c INTERR:tag
             {: 
                 Prints.label(c.getT());
             :}
@@ -221,7 +223,7 @@ exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
             {:
                 Prints.label(tag2);
                 RESULT = tag;
-            :}*/
+            :}
         ;
 
 condicion ::=   exp:e1 IGUAL exp:e2 {: RESULT = Prints.conditional(Prints.IGUAL, e1, e2); :}

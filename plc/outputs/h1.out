@@ -1,0 +1,14 @@
+	i = 1;
+label0:
+	if (i < 10) goto label2;
+	goto label3;
+label1:
+	$t0 = i + 1;
+	i = $t0;
+	goto label0;
+label2:
+	$t1 = x + i;
+	x = $t1;
+	goto label1;
+label3:
+	print x;

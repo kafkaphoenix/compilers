@@ -1,0 +1,10 @@
+	x = 2;
+	y = 3;
+	t0 = y + 2;
+	t1 = y + 1;
+	y = y + t1;
+	t2 = t0 + y;
+	y = y + t2;
+	x = x + y;
+	t3 = x * y;
+	print t3;

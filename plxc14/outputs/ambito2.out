@@ -1,0 +1,11 @@
+	x_0 = 1;
+	if (x_0 == y_0) goto L1;
+	goto L2;
+L1:
+	a_1 = 2;
+	goto L0;
+L2:
+L0:
+	# variable no declarada
+	error;
+	halt;

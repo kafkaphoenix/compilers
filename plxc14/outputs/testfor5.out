@@ -1,0 +1,15 @@
+	i = 100;
+	t0 = suma / 10;
+L0:
+	if (i < t0) goto L5;
+	goto L4;
+L1:
+	t1 = suma / 10;
+	i = i - t1;
+	goto L0;
+L4:
+	t2 = suma + i;
+	suma = t2;
+	goto L1;
+L5:
+	print suma;

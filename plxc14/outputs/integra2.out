@@ -1,0 +1,15 @@
+	y_0 = 10;
+	x_0 = 1;
+L0:
+	if (x_0 < y_0) goto L2;
+	goto L3;
+L1:
+	t0 = x_0;
+	x_0 = x_0 + 1;
+	y_0 = t0;
+	x_0 = y_0;
+	goto L0;
+L2:
+	print x_0;
+	goto L1;
+L3:

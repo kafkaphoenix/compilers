@@ -1,0 +1,4 @@
+	print 0;
+	# syntax error: #2
+	error;
+	halt;

@@ -1,0 +1,16 @@
+	a = 2;
+	b = 12;
+	if (a < 1) goto label1;
+	goto label0;
+label0:
+	if (5 < a) goto label3;
+	goto label2;
+label1:
+	goto label3;
+label2:
+	a = b;
+	goto label5;
+label3:
+	$t0 = b;
+	b = b + 1;
+label5:

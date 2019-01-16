@@ -1,0 +1,374 @@
+import java_cup.runtime.*;
+
+action code {:
+    
+:}
+
+parser code {:
+  @Override
+  public void report_error(String message, Object info) {
+      Prints.comment("syntax error: " + info);
+      Prints.error();
+      Prints.halt();
+  }
+:}
+
+/*Terminales*/
+terminal String IDENT, NUM;
+terminal INT, FLOAT;
+terminal PYC, COMA, COMMENT;
+terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG;
+terminal SWITCH, CASE, DEFAULT, BREAK, STEP, ELSE;
+terminal PRINT;
+terminal MAS, MENOS, POR, DIV, MODULO, MENOSUNARIO, MASMAS, MENOSMENOS, MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ; 
+terminal AP, CP, ALL, CLL, AC, CC;
+terminal OR, AND, NOT;
+terminal String DO, WHILE, ELSEIF, DP, IF;
+terminal DoubleTag FOR, DOWNTO, TO;
+
+/*No Terminales*/
+
+non terminal lista_de_sent, sent;
+non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, lista_switch, opt_default, sent_print;
+non terminal sent_for, sent_for_to, sent_for_downto;
+non terminal String list_declar_var, tipo, exp, asig, variable, dec,opt_step;
+non terminal DoubleTag condicion;
+
+/*Precedencias*/
+
+precedence nonassoc COMA;
+//precedence nonassoc VARIABLE;
+//precedence right INTERR;
+precedence left OR;
+precedence left AND;
+precedence nonassoc NOT;
+precedence nonassoc IGUAL, DISTINTO, MENOR, MENORIG, MAYOR, MAYORIG;
+precedence right ASIG, MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ;
+//precedence right ELVIS;
+precedence left MAS, MENOS;
+precedence left POR, DIV, MODULO;
+//precedence right AMP;
+//precedence right ASTERICO;
+//precedence nonassoc CAST_ENTERO, CAST_REAL, CAST_CHAR, CAST_STRING;
+precedence nonassoc MASMAS, MENOSMENOS;
+precedence nonassoc MENOSUNARIO;
+//precedence nonassoc TILDE;
+//precedence nonassoc PUNTERO;
+//precedence nonassoc FUNCION;
+precedence nonassoc IF;
+precedence nonassoc ELSEIF, ELSE;
+precedence nonassoc CASE;
+precedence nonassoc BREAK;
+precedence nonassoc AP, CP, ALL, CLL;
+precedence nonassoc AC, CC;
+
+/*Gramaticas*/
+
+start with lista_de_sent;
+
+lista_de_sent ::= lista_de_sent sent | ;
+
+sent ::= tipo:t list_declar_var PYC 
+        | exp PYC
+        | sent_if
+        | sent_while
+        | sent_do_while
+        | sent_for
+        | sent_for_to
+        | sent_for_downto
+        | sent_switch //añadido
+        | sent_print PYC
+        | ALL
+        {:
+            VarTable.climb();
+        :}
+            lista_de_sent CLL
+        {:
+            VarTable.clearScope();
+            VarTable.fall();
+        :}
+        ;
+
+tipo ::= INT:i
+    {:
+        VarTable.setCurrentType("int");
+        RESULT = "int";
+    :}
+    | FLOAT:f
+    {: 
+        RESULT = "float";
+    :}
+    ;
+
+dec ::= IDENT:v
+    {:
+        RESULT = v;
+    :}
+    |   IDENT:v ASIG exp:e
+    {:
+        Prints.asig(v + "_" + VarTable.currentScope(), e);
+        RESULT = v;
+    :}
+    ;
+
+list_declar_var ::= dec:d
+                {:
+                    VarTable.declareVar(d, VarTable.currentScope(), VarTable.currentType(), 1);
+                    
+                :}
+                |   list_declar_var COMA dec:d
+                {:
+                    VarTable.declareVar(d, VarTable.currentScope(), VarTable.currentType(), 1);
+                :}
+                ;
+
+asig ::= IDENT:i ASIG exp:e 
+    {: 
+        Prints.asig(VarTable.getVar(i), e);
+        RESULT = VarTable.getVar(i);
+    :}
+    ;
+
+/*sent_if ::= IF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} 
+            else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+else_if ::= //EPSILON 
+        {:
+        :} %prec COMA
+        |   ELSE sent
+        ;*/
+
+sent_if ::= IF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} 
+            else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+else_if ::= //EPSILON 
+        {:
+        :} %prec COMA
+        |   ELSE sent
+        |   ELSEIF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+
+
+sent_while ::=  WHILE:tag AP //tag comes from lexer
+            {:
+                Prints.label(tag);
+            :}
+                condicion:c CP
+            {:
+                Prints.label(c.getT());
+            :}
+                sent
+            {:
+                Prints._goto(tag);
+                Prints.label(c.getF()); // out of the loop
+            :}
+            ;
+
+sent_do_while ::=   DO:tag //tag comes from lexer
+                {:
+                    Prints.label(tag);
+                :}
+                    sent WHILE AP condicion:c
+                {:
+                    Prints.label(c.getT());
+                    Prints._goto(tag);
+                    Prints.label(c.getF()); //out of the loop
+                :} CP PYC
+                ;
+
+variable  ::= IDENT:i
+            {:
+                RESULT = VarTable.getVar(i);
+            :}
+            | AP variable:v CP
+            {:
+                RESULT = v;
+            :}
+            | AC variable:v CC
+            {:
+                RESULT = v;
+            :}
+            ;
+
+sent_for ::= FOR:tag AP exp PYC //tag comes from lexer
+            {:
+                Prints.label(tag.getT()); //check condition label
+            :}
+            condicion:c PYC //if exp
+            {:
+                Prints.label(tag.getF()); //modify variable label
+            :}
+            exp CP //modify variable exp
+            {:
+                Prints._goto(tag.getT()); //return to check condition
+                Prints.label(c.getT()); //true condition label
+            :}
+            sent //true condition exp
+            {:
+                Prints._goto(tag.getF()); //go to incremment
+                Prints.label(c.getF()); //out of the loop
+            :}
+            ;
+
+opt_step   ::= /*EPSILON*/
+            {:
+              RESULT = "1";
+            :}
+            | STEP exp:e
+            {:
+              RESULT = e;
+            :}
+            ;
+
+sent_for_to ::= FOR:tag exp:v TO exp:e
+            {:
+                Prints.label(tag.getT()); //check condition label
+                RESULT = Prints.conditional(Prints.MENORIG, v, e);
+                Prints.label(tag.getF()); //modify variable label
+            :}
+                opt_step:s DO
+            {:
+                Prints.operateEQ(v, Prints.MASEQ, s); //Incremment
+                Prints._goto(tag.getT()); //return to condition
+                Prints.label(((DoubleTag) RESULT).getT()); //true condition label
+            :}
+                sent
+            {:
+                Prints._goto(tag.getF()); //return to incremment
+                Prints.label(((DoubleTag) RESULT).getF()); //out of the loop
+            :}
+            ;
+
+sent_for_downto ::= FOR:tag exp:v DOWNTO exp:e
+                {:
+                    Prints.label(tag.getT()); //check condition label
+                    RESULT = Prints.conditional(Prints.MAYORIG, v, e);
+                    Prints.label(tag.getF()); //modify variable label
+                :}
+                    opt_step:s DO
+                {:
+                    Prints.operateEQ(v, Prints.MENOSEQ, s); //Incremment
+                    Prints._goto(tag.getT()); //return to condition
+                    Prints.label(((DoubleTag) RESULT).getT()); //true condition label
+                :}
+                    sent
+                {:
+                    Prints._goto(tag.getF()); //return to incremment
+                    Prints.label(((DoubleTag) RESULT).getF()); //out of the loop
+                :}
+                ;
+
+sent_switch ::= SWITCH AP exp CP ALL lista_switch opt_default CLL;
+
+lista_switch ::= CASE NUM DP sent BREAK PYC
+            | lista_switch CASE NUM DP sent BREAK PYC
+            ;
+
+opt_default ::= DEFAULT DP sent:s BREAK PYC {:  :}
+            | {: RESULT = ""; :}
+            ;
+
+sent_print ::=  PRINT exp:e {: Prints._print(e); :};
+
+exp ::=     exp:e1 MAS exp:e2 {: RESULT = Prints.operate(e1, Prints.MAS, e2); :}
+        |   exp:e1 MENOS exp:e2 {: RESULT = Prints.operate(e1, Prints.MENOS, e2); :}
+        |   exp:e1 POR exp:e2 {: RESULT = Prints.operate(e1, Prints.POR, e2); :}
+        |   exp:e1 DIV exp:e2 {: RESULT = Prints.operate(e1, Prints.DIV, e2); :}
+        |   exp:e1 MODULO exp:e2 {: RESULT = Prints.operate(e1, Prints.MODULO, e2); :} 
+        |   variable:e1 MASEQ exp:e2 {: Prints.operateEQ(e1, Prints.MASEQ, e2); RESULT = e1; :}
+        |   variable:e1 MENOSEQ exp:e2 {: Prints.operateEQ(e1, Prints.MENOSEQ, e2); RESULT = e1; :}
+        |   variable:e1 POREQ exp:e2 {: Prints.operateEQ(e1, Prints.POREQ, e2); RESULT = e1; :}
+        |   variable:e1 DIVEQ exp:e2 {: Prints.operateEQ(e1, Prints.DIVEQ, e2); RESULT = e1; :}
+        |   variable:e1 MODEQ exp:e2 {: Prints.operateEQ(e1, Prints.MODEQ, e2); RESULT = e1; :}
+        |   MENOS exp:e {: RESULT = Prints.operate(null, Prints.MENOSUNARIO, e); :} %prec MENOSUNARIO
+        |   AP exp:e CP {: RESULT = e; :}
+        |   asig:a {: RESULT = a; :}
+        |   variable:v {: RESULT = v; :} //string
+        |   NUM:n	{: RESULT = n; :} //entero
+        |   MASMAS variable:i 
+        {:
+            String expr = i+" + 1";
+            Prints.asig(i, expr);
+            RESULT = i;
+        :}
+        |   variable:i MASMAS 
+        {:
+            String temp = GenTag.genTemp();
+            Prints.asig(temp, i);
+            String expr = i+" + 1";
+            Prints.asig(i, expr);
+            RESULT = temp;
+        :}
+        |   MENOSMENOS variable:i 
+        {: 
+            String expr = i+" - 1";
+            Prints.asig(i, expr);
+            RESULT = i;
+        :} 
+        |   variable:i MENOSMENOS 
+        {:  
+            String temp = GenTag.genTemp();
+            Prints.asig(temp, i);
+            String expr = i+" - 1";
+            Prints.asig(i, expr);
+            RESULT = temp; 
+        :}
+        | COMMENT   {::}
+        ;
+
+condicion ::=   exp:e1 IGUAL exp:e2 {: RESULT = Prints.conditional(Prints.IGUAL, e1, e2); :}
+            |   exp:e1 DISTINTO exp:e2 {: RESULT = Prints.conditional(Prints.DISTINTO, e1, e2); :}
+            |   exp:e1 MENOR exp:e2 {: RESULT = Prints.conditional(Prints.MENOR, e1, e2); :}
+            |   exp:e1 MENORIG exp:e2 {: RESULT = Prints.conditional(Prints.MENORIG, e1, e2); :}
+            |   exp:e1 MAYOR exp:e2 {: RESULT = Prints.conditional(Prints.MAYOR, e1, e2); :}
+            |   exp:e1 MAYORIG exp:e2 {: RESULT = Prints.conditional(Prints.MAYORIG, e1, e2); :}
+            |   condicion:c1 AND {: Prints.label(c1.getT()); :}
+                condicion:c2 {: 
+                Prints.label(c1.getF()); 
+                Prints._goto(c2.getF());
+                RESULT = c2;
+            :}
+            |   condicion:c1 OR {: Prints.label(c1.getF()); :}
+                condicion:c2 {:
+                Prints.label(c1.getT());
+                Prints._goto(c2.getT());
+                RESULT = c2;
+            :}
+            |   NOT condicion:c {: c.permute(); RESULT = c; :}
+            |   AP condicion:c CP {: RESULT = c; :}
+            ;
+
+

@@ -1,0 +1,9 @@
+	if (1 < 2) goto label0;
+	goto label1;
+label0:
+	a = 1;
+	goto label2;
+label1:
+	a = 2;
+label2:
+	print a;

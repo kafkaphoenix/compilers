@@ -1,0 +1,12 @@
+	i = 1;
+label0:
+	$t0 = suma + i;
+	suma = $t0;
+	$t1 = i + 1;
+	i = $t1;
+	if (i < 10) goto label2;
+	goto label3;
+label2:
+	goto label0;
+label3:
+	print suma;

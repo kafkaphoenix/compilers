@@ -1,0 +1,4 @@
+	x_0 = 3;
+	# syntax error: #40
+	error;
+	halt;

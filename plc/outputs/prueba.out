@@ -1,0 +1,25 @@
+	f = 1;
+	i = 1;
+label0:
+	if (i < 4) goto label2;
+	goto label3;
+label1:
+	$t0 = i + 1;
+	i = $t0;
+	goto label0;
+label2:
+	$t1 = f * i;
+	f = $t1;
+	goto label1;
+label3:
+	print f;
+	equis = 64;
+label4:
+	if (1 < equis) goto label5;
+	goto label6;
+label5:
+	$t2 = equis / 2;
+	equis = $t2;
+	print equis;
+	goto label4;
+label6:

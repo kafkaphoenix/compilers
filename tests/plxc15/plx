@@ -1,0 +1,4 @@
+#!/bin/bash
+
+java PLXC $1.plx $1.ctd
+./ctd $1.ctd

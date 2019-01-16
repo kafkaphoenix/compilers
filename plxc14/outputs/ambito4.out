@@ -1,0 +1,30 @@
+	y_0 = 1;
+	x_0 = y_0;
+	if (x_0 == y_0) goto L1;
+	goto L2;
+L1:
+	t0 = y_0 + 2;
+	y_0 = t0;
+	if (x_0 < y_0) goto L4;
+	goto L5;
+L4:
+	t1 = x_0 + y_2;
+	t2 = t1 + 3;
+	y_2 = t2;
+	x_0 = y_2;
+	t3 = x_0 + y_2;
+	print t3;
+	goto L3;
+L5:
+L3:
+	t4 = x_0 * y_0;
+	t5 = t4 + 4;
+	x_0 = t5;
+	print x_0;
+	goto L0;
+L2:
+L0:
+	t6 = x_0 * y_0;
+	t7 = t6 + 7;
+	y_0 = t7;
+	print y_0;

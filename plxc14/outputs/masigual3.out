@@ -1,0 +1,45 @@
+match: --int--
+action [23] { return new Symbol(sym.INT); }
+match: -- --
+action [24] {  }
+match: --x--
+action [78] { return new Symbol(sym.IDENT, yytext()); }
+match: --;--
+action [26] { return new Symbol(sym.PYC); }
+match: --\u000A--
+action [24] {  }
+match: --int--
+action [23] { return new Symbol(sym.INT); }
+match: -- --
+action [24] {  }
+match: --y--
+action [78] { return new Symbol(sym.IDENT, yytext()); }
+match: --;--
+action [26] { return new Symbol(sym.PYC); }
+match: --\u000A--
+action [24] {  }
+match: --x--
+action [78] { return new Symbol(sym.IDENT, yytext()); }
+match: -- --
+action [24] {  }
+match: --=--
+action [29] { return new Symbol(sym.ASIG); }
+match: -- --
+action [24] {  }
+match: --y--
+action [78] { return new Symbol(sym.IDENT, yytext()); }
+match: --+=--
+action [60] { return new Symbol(sym.MASEQ); }
+match: --3--
+action [79] { return new Symbol(sym.NUM, yytext()); }
+match: -- --
+action [24] {  }
+match: --+=--
+action [60] { return new Symbol(sym.MASEQ); }
+instead expected token classes are [MENOS, POR, DIV, MODULO]
+# Var
+[(x, (0, (, 1))), (y, (0, (int, 1)))]
+# End Var
+# Var
+[]
+# End Var

@@ -1,0 +1,13 @@
+	i = 1;
+L0:
+	if (10 < i) goto L6;
+	goto L5;
+L1:
+	i = i + 1;
+	goto L0;
+L5:
+	t0 = suma + i;
+	suma = t0;
+	goto L1;
+L6:
+	print suma;

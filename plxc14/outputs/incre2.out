@@ -1,0 +1,18 @@
+	x = 2;
+	x = x + 1;
+	t0 = x + x;
+	t1 = x;
+	x = x + 1;
+	t2 = t0 + t1;
+	y = t2;
+	t3 = x;
+	x = x + 1;
+	t4 = y * t3;
+	x = x + 1;
+	t5 = t4 * x;
+	t6 = x;
+	x = x - 1;
+	x = x - 1;
+	t7 = t6 * x;
+	t8 = t5 - t7;
+	print t8;

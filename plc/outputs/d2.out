@@ -1,0 +1,25 @@
+	a = 3;
+	b = 12;
+	if (a < 1) goto label1;
+	goto label0;
+label0:
+	if (5 < a) goto label3;
+	goto label2;
+label1:
+	goto label3;
+label3:
+	b = a;
+	if (10 < b) goto label4;
+	goto label5;
+label2:
+	goto label4;
+label5:
+	if (b == a) goto label6;
+	goto label7;
+label4:
+	goto label7;
+label7:
+	a = b;
+label6:
+	$t0 = a * b;
+	print $t0;

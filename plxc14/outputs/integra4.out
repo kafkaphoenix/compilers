@@ -1,0 +1,25 @@
+	alfa_0 = 8;
+L0:
+	if (alfa_0 < 2) goto L5;
+	goto L4;
+L1:
+	t0 = alfa_0 / 2;
+	alfa_0 = alfa_0 - t0;
+	goto L0;
+L4:
+	t2 = alfa_0 / alfa_0;
+	t3 = t2 * alfa_0;
+	t1 = alfa_0 - t3;
+	t4 = t1 / 2;
+	if (t4 == 0) goto L8;
+	goto L9;
+L8:
+	x_1 = alfa_0;
+	goto L7;
+L9:
+	x_1 = 0;
+L7:
+	print x_1;
+	goto L1;
+L5:
+	print alfa_0;

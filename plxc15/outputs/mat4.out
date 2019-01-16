@@ -1,0 +1,4 @@
+	p_0 = 10;
+	# syntax error: #40
+	error;
+	halt;

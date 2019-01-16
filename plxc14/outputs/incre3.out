@@ -1,0 +1,5 @@
+	x_0 = 1;
+	t0 = x_0 + x_0;
+	# syntax error: #28
+	error;
+	halt;

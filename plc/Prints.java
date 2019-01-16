@@ -74,7 +74,7 @@ public class Prints {
             String t1 = GenTag.genTemp();
             out.println("\t" + t0 + " = " + e1 + " / " + e2 + ";");
             out.println("\t" + t1 + " = " + t0 + " * " + e2 + ";");
-            out.println("\t" + temp + " = " + e1 + " - " + e2 + ";");
+            out.println("\t" + temp + " = " + e1 + " - " + t1 + ";");
             break;
           case MENOSUNARIO:
             out.println("\t" + temp + " = -" + e2 + ";");
@@ -137,9 +137,13 @@ public class Prints {
             out.println("\tgoto "+ tag.getT()+";");
             break;
           case TRUE:
-          case FALSE:
-            out.println("\tif ( " + e1 + " ) goto " + tag.getT() + ";");
+			out.println("\tif ( " + e1 + " ) goto " + tag.getT() + ";");
             out.println("\tgoto "+ tag.getF()+";");
+            break;
+          case FALSE:
+            out.println("\tif ( " + e1 + " ) goto " + tag.getF() + ";");
+            out.println("\tgoto "+ tag.getT()+";");
+			break;
           default:
             out.println("Error: code generation failed with arguments: \texp1: " + e1 + "\texp2: " + "\tconditional number: " + oper);
             break;

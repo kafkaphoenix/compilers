@@ -1,0 +1,16 @@
+	x = 1;
+	if (a == b) goto label1;
+	goto label0;
+label0:
+	if (b == c) goto label2;
+	goto label3;
+label2:
+	$t0 = x + 2;
+	x = $t0;
+	goto label4;
+label3:
+	$t1 = x + 3;
+	x = $t1;
+label4:
+label1:
+	print x;

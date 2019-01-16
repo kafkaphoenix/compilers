@@ -1,0 +1,28 @@
+	i = 1;
+label0:
+	if (i < 10) goto label2;
+	goto label3;
+label1:
+	$t0 = i + 1;
+	i = $t0;
+	goto label0;
+label2:
+	k = 2;
+	j = 1;
+label4:
+	if (j < k) goto label6;
+	goto label7;
+label5:
+	$t1 = j + i;
+	j = $t1;
+	goto label4;
+label6:
+	$t2 = k * i;
+	k = $t2;
+	$t3 = x + i;
+	x = $t3;
+	goto label5;
+label7:
+	goto label1;
+label3:
+	print x;
