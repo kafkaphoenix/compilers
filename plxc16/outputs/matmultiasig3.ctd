@@ -1,0 +1,48 @@
+	t0[0] = 1;
+	t0[1] = 2;
+	t0[2] = 3;
+	t1 = t0[0];
+	a_0[0] = t1;
+	t1 = t0[1];
+	a_0[1] = t1;
+	t1 = t0[2];
+	a_0[2] = t1;
+	$a_0_length = 3;
+	t2[0] = 4;
+	t2[1] = 5;
+	t2[2] = 6;
+	t3 = t2[0];
+	b_0[0] = t3;
+	t3 = t2[1];
+	b_0[1] = t3;
+	t3 = t2[2];
+	b_0[2] = t3;
+	$b_0_length = 3;
+	t4[0] = a_0;
+	t4[1] = b_0;
+	t5 = t4[0];
+	c_0[0] = t5;
+	t5 = t4[1];
+	c_0[1] = t5;
+	t5 = t4[2];
+	c_0[2] = t5;
+	t5 = t4[3];
+	c_0[3] = t5;
+	t5 = t4[4];
+	c_0[4] = t5;
+	t5 = t4[5];
+	c_0[5] = t5;
+	$c_0_length = 2;
+	# syntax error: #2
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	a  |  int  |  0  |  array  |    |  3	a  |  int  |  0  |  array  |    |  	a  |  int  |  0  |  array  |    |  	a  |  int  |  0  |  array  |    |  
+	b  |  int  |  0  |  array  |    |  3	b  |  int  |  0  |  array  |    |  	b  |  int  |  0  |  array  |    |  	b  |  int  |  0  |  array  |    |  
+	c  |  int  |  0  |  array  |    |  6	c  |  int  |  0  |  array  |    |  	c  |  int  |  0  |  array  |    |  
+	d  |  int  |  0  |  array  |    |  6
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

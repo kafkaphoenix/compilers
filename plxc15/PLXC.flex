@@ -2,16 +2,13 @@ import java_cup.runtime.*;
 %%
 %cup
 
-%xstate COMMENT
-
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 
-/* comments */
-Comment =  {EndOfLineComment} | {DocumentationComment}
-//{TraditionalComment} |
-//TraditionalComment   = "/*" [^*] ~"*/" | "/*" "*"+ "/"
-// Comment can be the last line of the file, without line terminator.
+// Comments
+Comment =  {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
+
+TraditionalComment   = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 EndOfLineComment     = "//" {InputCharacter}* {LineTerminator}?
 DocumentationComment = "/**" {CommentContent} "*"+ "/"
 CommentContent       = ( [^*] | \*+ [^/*] )*
@@ -19,10 +16,16 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 %%
 
 "int"               {return new Symbol(sym.INT);}
+"float"             {return new Symbol(sym.FLOAT);}
+"(int)"             {return new Symbol(sym.CAST_INT);}
+"(float)"           {return new Symbol(sym.CAST_FLOAT);}
 [\ \n\t]            {}
-":"                 {return new Symbol(sym.DP, GenTag.genTag());}
+":"                 {return new Symbol(sym.DP, new Tuple(GenTag.genTemp(), ""));}
+"?"                 {return new Symbol(sym.INTERR, GenTag.genTag());}
+"?:"                {return new Symbol(sym.ELVIS, new Tuple(GenTag.genTemp(), ""));}
 ";"                 {return new Symbol(sym.PYC);}
 ","                 {return new Symbol(sym.COMA);}
+"&"					{return new Symbol(sym.AMP);}
 
 "="		              {return new Symbol(sym.ASIG);}
 "=="		            {return new Symbol(sym.IGUAL);}
@@ -39,10 +42,11 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 "to"                {return new Symbol(sym.TO, new DoubleTag());}
 "downto"            {return new Symbol(sym.DOWNTO, new DoubleTag());}
 "step"              {return new Symbol(sym.STEP);}
+"in"		            {return new Symbol(sym.IN);}
 "do"		            {return new Symbol(sym.DO, GenTag.genTag());}
 "while"		          {return new Symbol(sym.WHILE, GenTag.genTag());}
-"switch"		        {return new Symbol(sym.SWITCH);}
-"case"  	          {return new Symbol(sym.CASE);}
+"switch"		        {return new Symbol(sym.SWITCH, new DoubleTag("empty"));}
+"case"  	          {return new Symbol(sym.CASE, GenTag.genTag());}
 "break"		          {return new Symbol(sym.BREAK);}
 "default"		        {return new Symbol(sym.DEFAULT);}
 
@@ -73,15 +77,9 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 "!"		              {return new Symbol(sym.NOT);}
 
 {Comment}           {}
-"/*"                {yybegin(COMMENT);}
 
-[a-zA-Z_]+          {return new Symbol(sym.IDENT, yytext());}
 0|[1-9][0-9]*       {return new Symbol(sym.NUM, yytext());}
+(0|[1-9][0-9]*)\.[0-9]+([eE][+-]?(0|[1-9][0-9]*))? {return new Symbol(sym.FLOATNUM, yytext());}
+[_a-zA-Z][_a-zA-Z0-9]*         {return new Symbol(sym.IDENT, yytext());}
 
 [^]		              {throw new Error("Error: Invalid argument <"+yytext()+">");}
-
-<COMMENT> {
-  ~"*/"             {yybegin(YYINITIAL);}
-  [^*]              {}
-  "/*"              {Prints.complexError(0);}
-}

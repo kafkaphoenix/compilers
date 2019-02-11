@@ -1,0 +1,42 @@
+default:
+	java -jar ../java-cup/java-cup-11b.jar PLXC.cup
+	java -jar ../jflex/jflex-1.6.1.jar PLXC.flex
+	javac -classpath ../java-cup/java-cup-11b-runtime.jar *.java
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/incre3c.plx > ./outputs/incre3c.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char1.plx > ./outputs/char1.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char2.plx > ./outputs/char2.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char3.plx > ./outputs/char3.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char4.plx > ./outputs/char4.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char5.plx > ./outputs/char5.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char6.plx > ./outputs/char6.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char7.plx > ./outputs/char7.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char8.plx > ./outputs/char8.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char9.plx > ./outputs/char9.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char10.plx > ./outputs/char10.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char11.plx > ./outputs/char11.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/char12.plx > ./outputs/char12.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat1.plx > ./outputs/charmat1.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat2.plx > ./outputs/charmat2.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat3.plx > ./outputs/charmat3.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat4.plx > ./outputs/charmat4.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat5.plx > ./outputs/charmat5.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat6.plx > ./outputs/charmat6.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat7.plx > ./outputs/charmat7.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat8.plx > ./outputs/charmat8.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charmat9.plx > ./outputs/charmat9.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper1.plx > ./outputs/charoper1.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper2.plx > ./outputs/charoper2.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper3.plx > ./outputs/charoper3.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper4.plx > ./outputs/charoper4.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper5.plx > ./outputs/charoper5.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper6.plx > ./outputs/charoper6.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper7.plx > ./outputs/charoper7.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/charoper8.plx > ./outputs/charoper8.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor1.plx > ./outputs/matfor1.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor2.plx > ./outputs/matfor2.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor3.plx > ./outputs/matfor3.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor4.plx > ./outputs/matfor4.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor5.plx > ./outputs/matfor5.ctd
+	java -classpath .:../java-cup/java-cup-11b-runtime.jar PLXC ../tests/plxc18/matfor6.plx > ./outputs/matfor6.ctd
+	rm *.class sym.java parser.java Yylex.java
+

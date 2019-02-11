@@ -1,0 +1,11 @@
+	p_0 = 10;
+	# syntax error: #2
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	p  |  int  |  0  |  var  |    |  
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

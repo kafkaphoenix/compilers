@@ -1,0 +1,830 @@
+import java_cup.runtime.*;
+import java.util.*;
+
+action code {:
+    
+    //Pointers
+    int pointer_level = 0;
+    int dereference_level = 0;
+
+    //Arrays
+    String arrayDec = "";
+    int tamUsed = 0;
+    String arrayDecTemp = "";
+    List<Tuple<String, String>> list = new ArrayList<>();
+    String arrayTipo = "";
+:}
+
+parser code {:
+  @Override
+  public void report_error(String message, Object info) {
+      Prints.comment("syntax error: " + info);
+      Prints.error();
+      VarTable.showTable();
+      Prints.showTable();
+      Prints.halt();
+  }
+:}
+
+/*Terminales*/
+terminal String IDENT, NUM, FLOATNUM, CHARACTER;
+terminal INT, FLOAT, CAST_INT, CAST_FLOAT, CAST_CHAR, CAST_STRING, CHAR;
+terminal PYC, COMA, COMMENT;
+terminal ASIG, IGUAL, DISTINTO, MAYOR, MENOR, MAYORIG, MENORIG;
+terminal DEFAULT, BREAK, STEP, ELSE, IN;
+terminal PRINT;
+terminal AMP, PUNTERO;
+terminal MAS, MENOS, POR, DIV, MODULO, MENOSUNARIO, MASMAS, MENOSMENOS, MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ; 
+terminal AP, CP, ALL, CLL, AC, CC;
+terminal OR, AND, NOT;
+terminal VIRGU, LENGTH;
+terminal String DO, WHILE, ELSEIF, IF, CASE, INTERR;
+terminal DoubleTag FOR, DOWNTO, TO, SWITCH;
+terminal Tuple<String, String> DP, ELVIS;
+
+/*No Terminales*/
+
+non terminal lista_de_sent, sent, list_declar_var, dec;
+non terminal sent_if, else_if, sent_while, sent_do_while, sent_switch, opt_default, sent_print;
+non terminal sent_for, sent_for_to, sent_for_downto, sent_for_in, sent_for_each;
+non terminal String tipo, opt_break;
+non terminal pointer_dec;
+non terminal moreDim, array_dec, exp_list, exp_list2, array_init;
+non terminal Tuple<String, String> cast, exp, numero, variable, asig, opt_step, pointer, pointer_asig, array_asig;
+non terminal DoubleTag condicion, case_list, argSwitch;
+
+/*Precedencias*/
+
+precedence nonassoc COMA, IDENT;
+precedence right INTERR;
+precedence left OR;
+precedence left AND;
+precedence nonassoc IGUAL, DISTINTO, MENOR, MENORIG, MAYOR, MAYORIG;
+precedence right ASIG, MASEQ, MENOSEQ, POREQ, DIVEQ, MODEQ;
+precedence right ELVIS;
+precedence left MAS, MENOS;
+precedence left POR, DIV, MODULO;
+precedence nonassoc NOT, VIRGU;
+precedence right AMP;
+precedence right PUNTERO;
+precedence nonassoc CAST_INT, CAST_FLOAT, CAST_CHAR, CAST_STRING;
+precedence nonassoc MASMAS, MENOSMENOS;
+precedence nonassoc MENOSUNARIO;
+//precedence nonassoc FUNCION;
+precedence nonassoc IF;
+precedence nonassoc ELSEIF, ELSE;
+precedence nonassoc CASE;
+precedence nonassoc BREAK;
+precedence nonassoc AP, CP, ALL, CLL;
+precedence nonassoc AC, CC;
+
+/*Gramaticas*/
+
+start with lista_de_sent;
+
+lista_de_sent ::= lista_de_sent sent | ;
+
+sent ::= tipo list_declar_var PYC 
+        | exp PYC
+        | sent_if
+        | sent_while
+        | sent_do_while
+        | sent_for
+        | sent_for_to
+        | sent_for_downto
+        | sent_for_in
+        | sent_for_each
+        | sent_switch //añadido
+        | sent_print PYC
+        | ALL
+        {:
+            VarTable.climb();
+        :}
+            lista_de_sent CLL
+        {:
+            VarTable.clearScope();
+            VarTable.fall();
+        :}
+        ;
+
+tipo ::= INT:i
+    {:
+        VarTable.setCurrentType("int");
+        RESULT = "int";
+    :}
+    | FLOAT:f
+    {: 
+        VarTable.setCurrentType("float");
+        RESULT = "float";
+    :}
+    | CHAR:c
+    {: 
+        VarTable.setCurrentType("char");
+        RESULT = "char";
+    :}
+    ;
+
+cast ::=    CAST_INT exp:e
+        {:
+            RESULT = Prints.cast("int", e);
+        :}
+        |   CAST_FLOAT exp:e
+        {:
+            RESULT = Prints.cast("float", e);
+        :}
+        |   CAST_CHAR exp:e
+        {:
+            RESULT = new Tuple(e.getA()+"", "char");
+        :}
+        ;
+
+numero ::=  NUM:i
+        {:
+            RESULT = new Tuple(i, "int");
+        :}
+        |   FLOATNUM:f
+        {:
+            RESULT = new Tuple(f, "float");
+        :}
+        ;
+
+variable ::=    IDENT:id
+            {:
+                Node n = VarTable.findNode(id);
+                String type = n.getType();
+                RESULT = new Tuple(n.getName() + "_" + n.getScope(), type);
+            :}
+            ;
+
+list_declar_var ::= dec
+                |   list_declar_var COMA dec
+                ;
+
+dec ::= IDENT:id
+    {:
+        VarTable.declareVar(id);
+    :}
+    |   IDENT:id ASIG exp:e
+    {:
+        VarTable.declareVar(id);
+        Prints.asig(new Tuple(id + "_" + VarTable.currentScope(), VarTable.currentType()), e);
+    :}
+    |   pointer_dec
+    |   array_dec
+    ;
+
+asig ::= variable:id ASIG exp:e 
+    {: 
+        Prints.asig(id, e);
+        RESULT = id;
+    :}
+    |   pointer_asig:pt
+    {:
+        RESULT = pt;
+    :}
+    |   array_asig:a
+    {:
+        RESULT = a;
+    :}
+    ;
+
+exp ::=     exp:e1 MAS exp:e2
+        {:
+            RESULT = Prints.operate(e1, Prints.MAS, e2);
+        :}
+        |   exp:e1 MENOS exp:e2
+        {:
+            RESULT = Prints.operate(e1, Prints.MENOS, e2);
+        :}
+        |   exp:e1 POR exp:e2
+        {:
+            RESULT = Prints.operate(e1, Prints.POR, e2);
+        :}
+        |   exp:e1 DIV exp:e2
+        {:
+            RESULT = Prints.operate(e1, Prints.DIV, e2);
+        :}
+        |   exp:e1 MODULO exp:e2 {: RESULT = Prints.operate(e1, Prints.MODULO, e2); :} 
+        |   variable:e1 MASEQ exp:e2 {: Prints.operateEQ(e1, Prints.MASEQ, e2); RESULT = e1; :}
+        |   variable:e1 MENOSEQ exp:e2 {: Prints.operateEQ(e1, Prints.MENOSEQ, e2); RESULT = e1; :}
+        |   variable:e1 POREQ exp:e2 {: Prints.operateEQ(e1, Prints.POREQ, e2); RESULT = e1; :}
+        |   variable:e1 DIVEQ exp:e2 {: Prints.operateEQ(e1, Prints.DIVEQ, e2); RESULT = e1; :}
+        |   variable:e1 MODEQ exp:e2 {: Prints.operateEQ(e1, Prints.MODEQ, e2); RESULT = e1; :}
+        |   MENOS exp:e {: RESULT = Prints.operate(null, Prints.MENOSUNARIO, e); :} %prec MENOSUNARIO
+        |   AP exp:e CP {: RESULT = e; :}
+        |   asig:a {: RESULT = a; :}
+        |   variable:v {: RESULT = v; :}
+        |   numero:n {: RESULT = n; :}
+        |   cast:c  {: RESULT = c; :}
+        |   MASMAS variable:i 
+        {:
+            Tuple expr = new Tuple(i.getA()+" + 1", "int");
+            Prints.asig(i, expr);
+            RESULT = i;
+        :}
+        |   variable:i MASMAS 
+        {:
+            Tuple temp = new Tuple(GenTag.genTemp(), "int");
+            Prints.asig(temp, i);
+            Tuple expr = new Tuple(i.getA()+" + 1", "int");
+            Prints.asig(i, expr);
+            RESULT = temp;
+        :}
+        |   MENOSMENOS variable:i 
+        {: 
+            Tuple expr = new Tuple(i.getA()+" - 1", "int");
+            Prints.asig(i, expr);
+            RESULT = i;
+        :} 
+        |   variable:i MENOSMENOS 
+        {:  
+            Tuple temp = new Tuple(GenTag.genTemp(), "int");
+            Prints.asig(temp, i);
+            Tuple expr = new Tuple(i.getA()+" - 1", "int");
+            Prints.asig(i, expr);
+            RESULT = temp; 
+        :}
+        |   COMMENT {::}
+        |   pointer:pt {:  RESULT = new Tuple(Prints.derefPointer(pt.getA()), pt.getB()); :}
+        |   condicion:c INTERR:tag
+        {: 
+            
+            Prints.label(c.getT());
+        :}
+            exp:e1 DP:t
+        {:  
+            t.setB(e1.getB());
+            Prints.asig(t, e1);
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :}
+            exp:e2
+        {:
+            t.setB(e2.getB());
+            Prints.asig(t, e2);
+            Prints.label(tag);
+            RESULT = t;
+        :}
+        |   exp:e1 ELVIS:t exp:e2
+        {:
+            t.setB(e1.getB());
+            String l = GenTag.genTag();
+            Prints.asig(t, e1);
+            Prints.elvis(e1.getA(), l);
+            t.setB(e2.getB());
+            Prints.asig(t, e2);
+            Prints.label(l);
+            RESULT = t;
+        :}
+        |   variable:id AC exp:e CC
+        {:
+            String temp = GenTag.genTemp();
+            Prints.getArrayValue(id.getA(), e, temp);
+            RESULT = new Tuple(temp, id.getB());
+        :}
+        |   CHARACTER:c
+        {:
+            char c1 = Prints.getChar(c);
+            int code = (int) c1;
+            RESULT = new Tuple(Integer.toString(code), "char");
+        :}
+        |   NOT exp:e
+        {:
+            RESULT = Prints.doNot(e.getA(), e.getB());
+        :}
+        |   VIRGU exp:e
+        {:
+            RESULT = Prints.doVirgu(e.getA(), e.getB());
+        :}
+        |   variable:id LENGTH
+        {:
+            RESULT = new Tuple("$" + id.getA() + "_length", "int");
+        :}
+        ;
+
+/*sent_if ::= IF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} 
+            else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+else_if ::= //EPSILON 
+        {:
+        :} %prec COMA
+        |   ELSE sent
+        ;*/
+
+sent_if ::= IF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} 
+            else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+else_if ::= //EPSILON 
+        {:
+        :} %prec COMA
+        |   ELSE sent
+        |   ELSEIF:tag AP condicion:c CP
+        {:
+            Prints.label(c.getT());
+        :}
+            sent
+        {:
+            Prints._goto(tag);
+            Prints.label(c.getF());
+        :} else_if
+        {:
+            Prints.label(tag);
+        :}
+        ;
+
+
+sent_while ::=  WHILE:tag AP //tag comes from lexer
+            {:
+                Prints.label(tag);
+            :}
+                condicion:c CP
+            {:
+                Prints.label(c.getT());
+            :}
+                sent
+            {:
+                Prints._goto(tag);
+                Prints.label(c.getF()); // out of the loop
+            :}
+            ;
+
+sent_do_while ::=   DO:tag //tag comes from lexer
+                {:
+                    Prints.label(tag);
+                :}
+                    sent WHILE AP condicion:c
+                {:
+                    Prints.label(c.getT());
+                    Prints._goto(tag);
+                    Prints.label(c.getF()); //out of the loop
+                :} CP PYC
+                ;
+
+sent_for ::= FOR:tag AP exp PYC //tag comes from lexer
+        {:
+            Prints.label(tag.getT()); //check condition label
+        :}
+            condicion:c PYC //if exp
+        {:
+            Prints.label(tag.getF()); //modify variable label
+        :}
+            exp CP //modify variable exp
+        {:
+            Prints._goto(tag.getT()); //return to check condition
+            Prints.label(c.getT()); //true condition label
+        :}
+            sent //true condition exp
+        {:
+            Prints._goto(tag.getF()); //go to incremment
+            Prints.label(c.getF()); //out of the loop
+        :}
+        ;
+
+opt_step   ::= /*EPSILON*/
+            {:
+              RESULT = new Tuple("1", "int");
+            :}
+            | STEP exp:e
+            {:
+              RESULT = e;
+            :}
+            ;
+
+sent_for_to ::= FOR:tag exp:v TO exp:e
+            {:
+                Prints.label(tag.getT()); //check condition label
+                RESULT = Prints.conditional(Prints.MENORIG, v, e);
+                Prints.label(tag.getF()); //modify variable label
+            :}
+                opt_step:s DO
+            {:
+                Prints.operateEQ(v, Prints.MASEQ, s); //Incremment
+                Prints._goto(tag.getT()); //return to condition
+                Prints.label(((DoubleTag) RESULT).getT()); //true condition label
+            :}
+                sent
+            {:
+                Prints._goto(tag.getF()); //return to incremment
+                Prints.label(((DoubleTag) RESULT).getF()); //out of the loop
+            :}
+            ;
+
+sent_for_downto ::= FOR:tag exp:v DOWNTO exp:e
+                {:
+                    Prints.label(tag.getT()); //check condition label
+                    RESULT = Prints.conditional(Prints.MAYORIG, v, e);
+                    Prints.label(tag.getF()); //modify variable label
+                :}
+                    opt_step:s DO
+                {:
+                    Prints.operateEQ(v, Prints.MENOSEQ, s); //Incremment
+                    Prints._goto(tag.getT()); //return to condition
+                    Prints.label(((DoubleTag) RESULT).getT()); //true condition label
+                :}
+                    sent
+                {:
+                    Prints._goto(tag.getF()); //return to incremment
+                    Prints.label(((DoubleTag) RESULT).getF()); //out of the loop
+                :}
+                ;
+
+sent_for_in ::= FOR:tag variable:e IN variable:v DO
+            {:
+                Node n = VarTable.findNode(v.getA());
+                if (!(n.getWhoIam()).equals("array")) {
+                    Prints.comment("Type error");
+                    Prints.error();
+                    Prints.halt();
+                } else {
+                    Node n2 = VarTable.findNode(e.getA());
+                    if (!((n2.getType()).equals(n.getType()))) {
+                        Prints.comment("Incompatible Types");
+                        Prints.error();
+                        Prints.halt();
+                    }
+                }
+                String t0 = GenTag.genTemp();
+                Prints.nocomment(t0 + " = -1;");
+                Prints.label(tag.getT());//increment
+                Prints.nocomment(t0 + " = " + t0 + " + 1;");
+                RESULT = new DoubleTag();
+                DoubleTag db = (DoubleTag) RESULT;
+                Prints.nocomment("if (" + t0 + " < " + (VarTable.findNode(v.getA())).getSize() + ") goto " + db.getT() + ";");
+                Prints._goto(db.getF());//false
+                Prints.label(db.getT());//true
+                Prints.nocomment(e.getA() + " = " + v.getA() + "[" + t0 + "];");
+            :}
+                sent
+            {:
+                Prints._goto(tag.getT());//return to increment
+                Prints.label(((DoubleTag) RESULT).getF());//false
+                Prints.label(tag.getF());//end
+            :}
+            |   FOR:tag variable:e IN ALL exp_list2 CLL DO
+            {:
+                String t = GenTag.genTemp();
+                Node n = VarTable.findNode(e.getA());
+                String type = n.getType();
+                for (int i = 0; i < list.size(); ++i) {
+                    if (!(type.equals((list.get(i)).getB()))) {
+                        Prints.comment("Incompatible Types");
+                        Prints.error();
+                        Prints.halt();
+                    }
+                    Prints.nocomment(t + "[" + i + "] = " + (list.get(i)).getA() + ";");
+                }
+                String t0 = GenTag.genTemp();
+                Prints.nocomment(t0 + " = -1;");
+                Prints.label(tag.getT());//increment
+                Prints.nocomment(t0 + " = " + t0 + " + 1;");
+                RESULT = new DoubleTag();
+                DoubleTag db = (DoubleTag) RESULT;
+                Prints.nocomment("if (" + t0 + " < " + list.size() + ") goto " + db.getT() + ";");
+                Prints._goto(db.getF());//false
+                Prints.label(db.getT());//true
+                Prints.nocomment(e.getA() + " = " + t + "[" + t0 + "];");
+                list.clear();
+            :}
+                sent
+            {:
+                Prints._goto(tag.getT());//return to increment
+                Prints.label(((DoubleTag) RESULT).getF());//false
+                Prints.label(tag.getF());//end
+            :}
+            |   FOR:tag variable:e AC exp:ne CC IN variable:v DO
+            {:
+                Node n = VarTable.findNode(v.getA());
+                if (!(n.getWhoIam()).equals("array")) {
+                    Prints.comment("Type error");
+                    Prints.error();
+                    Prints.halt();
+                } else {
+                    Node n2 = VarTable.findNode(e.getA());
+                    if (!((n2.getType()).equals(n.getType()))) {
+                        Prints.comment("Incompatible Types");
+                        Prints.error();
+                        Prints.halt();
+                    }
+                }
+                String t0 = GenTag.genTemp();
+                Prints.nocomment(t0 + " = -1;");
+                Prints.label(tag.getT());//increment
+                Prints.nocomment(t0 + " = " + t0 + " + 1;");
+                RESULT = new DoubleTag();
+                DoubleTag db = (DoubleTag) RESULT;
+                Prints.nocomment("if (" + t0 + " < " + (VarTable.findNode(v.getA())).getSize() + ") goto " + db.getT() + ";");
+                Prints._goto(db.getF());//false
+                Prints.label(db.getT());//true
+                String t2 = GenTag.genTemp();
+                Prints.nocomment(t2 + " = " + v.getA() + "[" + t0 + "];");
+                Prints.nocomment(e.getA() + "[" + ne.getA() + "] = " + t2 + ";");
+            :}
+                sent
+            {:
+                Prints._goto(tag.getT());//return to increment
+                Prints.label(((DoubleTag) RESULT).getF());//false
+                Prints.label(tag.getF());//end
+            :}
+            |   FOR:tag variable:e AC exp:ne CC IN ALL exp_list2 CLL DO
+            {:
+                String t = GenTag.genTemp();
+                Node n = VarTable.findNode(e.getA());
+                String type = n.getType();
+                for (int i = 0; i < list.size(); ++i) {
+                    if (!(type.equals((list.get(i)).getB()))) {
+                        Prints.comment("Incompatible Types");
+                        Prints.error();
+                        Prints.halt();
+                    }
+                    Prints.nocomment(t + "[" + i + "] = " + (list.get(i)).getA() + ";");
+                }
+                String t0 = GenTag.genTemp();
+                Prints.nocomment(t0 + " = -1;");
+                Prints.label(tag.getT());//increment
+                Prints.nocomment(t0 + " = " + t0 + " + 1;");
+                RESULT = new DoubleTag();
+                DoubleTag db = (DoubleTag) RESULT;
+                Prints.nocomment("if (" + t0 + " < " + list.size() + ") goto " + db.getT() + ";");
+                Prints._goto(db.getF());//false
+                Prints.label(db.getT());//true
+                String t2 = GenTag.genTemp();
+                Prints.nocomment(t2 + " = " + t + "[" + t0 + "];");
+                Prints.nocomment(e.getA() + "[" + ne.getA() + "] = " + t2 + ";");
+                list.clear();
+            :}
+                sent
+            {:
+                Prints._goto(tag.getT());//return to increment
+                Prints.label(((DoubleTag) RESULT).getF());//false
+                Prints.label(tag.getF());//end
+            :}
+            ;
+
+sent_for_each ::=   FOR:tag AP variable:v DP variable:v2 CP
+                {:
+                    if (!v.getB().equals(v2.getB()))
+                    {
+                        Prints.comment("Type Error, Different types");
+                        Prints.error();
+                        Prints.halt();
+                    }
+                    Prints.doForEach(v.getA(), v2.getA(), tag);
+                :}
+                    sent
+                {:
+                    Prints._goto(tag.getT());//return to increment
+                    Prints.label(tag.getF());//end
+                :}
+                ;
+
+argSwitch ::= SWITCH:tag AP exp:e CP ALL
+            {:
+                tag.setT(GenTag.genTag()); // END
+                tag.setF(e.getA()); // var to check
+                RESULT = tag;
+            :}
+            ;
+
+sent_switch ::= case_list:c 
+            {:
+                Prints.label(c.getNext()); // first case tag
+            :}
+            opt_default CLL
+            {:
+                Prints.label(c.getT()); // END
+            :}
+            ;
+
+case_list ::= argSwitch:arg CASE:tag exp:n DP
+        {:
+            Prints._switch(arg.getF(), n.getA(), tag); //var, case value, end case
+        :}
+            lista_de_sent opt_break:b
+        {:
+            String l = GenTag.genTag(); //next tag
+            if (b!= null) { // break
+                Prints._goto(arg.getT()); // go to END
+            } else { // no break
+                Prints._goto(l); // go to next case
+            }
+            arg.setNext(l);
+            Prints.label(tag); // END CASE
+            RESULT = arg;
+        :}
+        |   case_list:arg CASE:tag exp:n DP
+        {:
+            Prints._switch(arg.getF(), n.getA(), tag); //var, case value, end case
+            Prints.label(arg.getNext()); // New case
+        :}
+            lista_de_sent opt_break:b
+        {:
+            String l = GenTag.genTag(); //next tag
+            if (b!= null) { // break
+                Prints._goto(arg.getT()); // go to END
+            } else { // no break
+                Prints._goto(l); // go to next case
+            }
+            arg.setNext(l);
+            Prints.label(tag); // END CASE
+            RESULT = arg;
+        :}
+        ;
+
+opt_break ::=   BREAK PYC
+            {:
+                RESULT = "break";
+            :}
+            |   // Epsilon
+            ;
+
+opt_default ::= DEFAULT DP sent
+            |   // Epsilon
+            ;
+
+sent_print ::=  PRINT exp:e 
+            {:
+                Prints.genPrint(e);
+            :};
+
+condicion ::=   exp:e1 IGUAL exp:e2 {: RESULT = Prints.conditional(Prints.IGUAL, e1, e2); :}
+            |   exp:e1 DISTINTO exp:e2 {: RESULT = Prints.conditional(Prints.DISTINTO, e1, e2); :}
+            |   exp:e1 MENOR exp:e2 {: RESULT = Prints.conditional(Prints.MENOR, e1, e2); :}
+            |   exp:e1 MENORIG exp:e2 {: RESULT = Prints.conditional(Prints.MENORIG, e1, e2); :}
+            |   exp:e1 MAYOR exp:e2 {: RESULT = Prints.conditional(Prints.MAYOR, e1, e2); :}
+            |   exp:e1 MAYORIG exp:e2 {: RESULT = Prints.conditional(Prints.MAYORIG, e1, e2); :}
+            |   condicion:c1 AND {: Prints.label(c1.getT()); :}
+                condicion:c2 {: 
+                Prints.label(c1.getF()); 
+                Prints._goto(c2.getF());
+                RESULT = c2;
+            :}
+            |   condicion:c1 OR {: Prints.label(c1.getF()); :}
+                condicion:c2 {:
+                Prints.label(c1.getT());
+                Prints._goto(c2.getT());
+                RESULT = c2;
+            :}
+            |   NOT condicion:c {: c.permute(); RESULT = c; :}
+            |   AP condicion:c CP {: RESULT = c; :}
+            ;
+
+//Pointers
+
+pointer_dec ::= POR IDENT:id //declaration
+            {:
+                ++pointer_level;
+                VarTable.declareVar(id, "pointer", pointer_level);
+                pointer_level = 0;
+            :}
+            | POR {: ++pointer_level; :} pointer_dec
+            ;
+
+pointer ::= POR variable:v
+        {:
+            ++dereference_level;
+            RESULT = v;
+        :} %prec PUNTERO
+        |   POR {: ++dereference_level; :} pointer:pt //variable
+        {:
+            RESULT = pt;
+        :}  %prec PUNTERO
+        ;
+
+pointer_asig ::= pointer:pt ASIG exp:e
+            {:
+                Tuple t = new Tuple(Prints.pointerAsig(pt.getA(), e.getA()), pt.getB());
+                dereference_level = 0;
+                RESULT = t;
+            :}
+            |   variable:v ASIG AMP variable:vn
+            {:
+                if (Prints.getType(vn.getA()) == Prints.VAR || Prints.getType(vn.getA()) == Prints.TEMP)
+                {
+                    RESULT = new Tuple(Prints.pointerAsigAmp(v.getA(), vn.getA(), true, 0), v.getB());
+                } else {
+                    Prints.complexError(0);
+                }
+            :}
+            |   pointer:pt ASIG AMP variable:vn
+            {:
+                if (Prints.getType(vn.getA()) == Prints.VAR || Prints.getType(vn.getA()) == Prints.TEMP)
+                {
+                    Tuple t = new Tuple(Prints.pointerAsigAmp(pt.getA(), vn.getA(), false, dereference_level), pt.getB());
+                    dereference_level = 0;
+                    RESULT = t;
+                } else {
+                    Prints.complexError(0);
+                }
+            :}
+            ;
+
+//Matrices
+
+array_dec ::=   IDENT:id AC NUM:n CC moreDim:d 
+            {:
+                VarTable.declareVar(id, "array", Integer.parseInt(n));
+                arrayDec = id;
+                arrayTipo = VarTable.currentType();
+                tamUsed = 0;
+            :}
+                array_init {: Prints.nocomment("$" + arrayDec + "_" + VarTable.currentScope() + "_length = " + Integer.parseInt(n) + ";"); :}
+            |   AC NUM:n CC IDENT:id moreDim:d 
+            {:    
+                VarTable.declareVar(id, "array", Integer.parseInt(n));
+                arrayDec = id;
+                arrayTipo = VarTable.currentType();
+                tamUsed = 0;
+            :}
+                array_init {: Prints.nocomment("$" + arrayDec + "_" + VarTable.currentScope() + "_length = " + Integer.parseInt(n) + ";"); :}
+            ;
+
+array_asig ::=  variable:id AC exp:e1 CC ASIG exp:e2 //a[1] = 3; a[i] = 3;
+            {:
+                Prints.checkRange(id.getA(), e1);
+                Prints.arrayAsig(id, e1, e2);
+                RESULT = id;
+            :}
+            |   variable:id ASIG //a = {1, 2, 3};
+            {:
+                arrayDec = id.getA();
+                tamUsed = 0;
+                arrayTipo = id.getB();
+                arrayDecTemp = GenTag.genTemp();
+            :}
+                ALL exp_list CLL
+            {:
+                String temp = GenTag.genTemp();
+                Prints.initArray2(arrayDec, arrayDecTemp, temp, tamUsed, true);
+                RESULT = new Tuple(id.getA(), id.getB());
+            :}
+            ;
+
+moreDim ::= AC NUM:n CC moreDim
+        {:
+
+        :}
+        | // Epsilon
+        ;
+
+array_init ::=  ASIG {: arrayDecTemp = GenTag.genTemp(); :}
+                ALL exp_list CLL
+            {:
+                String temp = GenTag.genTemp();
+                Prints.initArray2(arrayDec + "_" + VarTable.currentScope(), arrayDecTemp, temp, tamUsed, false);
+            :}
+            | // Epsilon
+            ;
+
+exp_list ::=   exp_list COMA exp:e
+        {:
+            if (!arrayTipo.equals(e.getB())) {
+                Prints.comment("Type error");
+                Prints.error();
+                Prints.halt();
+            }
+            Prints.initArray(arrayDec, arrayDecTemp, tamUsed, e.getA());
+            tamUsed++;
+        :}
+        |   exp:e
+        {:
+            if (!arrayTipo.equals(e.getB())) {
+                Prints.comment("Type error");
+                Prints.error();
+                Prints.halt();
+            }
+            Prints.initArray(arrayDec, arrayDecTemp, tamUsed, e.getA());
+            tamUsed++;
+        :}
+        ;
+
+exp_list2 ::=   exp_list2 COMA exp:e
+        {:
+            list.add(e);
+        :}
+        |   exp:e
+        {:
+            list.add(e);
+        :}
+        ;

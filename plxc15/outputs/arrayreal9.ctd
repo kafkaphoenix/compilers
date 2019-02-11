@@ -1,0 +1,35 @@
+	$x_length = 3;
+	$y_length = 3;
+	# Comprobacion de rango
+	if (0 < 0) goto L0;
+	if (3 < 0) goto L0;
+	if (3 == 0) goto L0;
+	goto L1;
+L0:
+	error;
+	halt;
+L1:
+	x_0[0] = 1.1;
+	# Comprobacion de rango
+	if (1 < 0) goto L2;
+	if (3 < 1) goto L2;
+	if (3 == 1) goto L2;
+	goto L3;
+L2:
+	error;
+	halt;
+L3:
+	x_0[1] = 2.2;
+	# Comprobacion de rango
+	if (2 < 0) goto L4;
+	if (3 < 2) goto L4;
+	if (3 == 2) goto L4;
+	goto L5;
+L4:
+	error;
+	halt;
+L5:
+	x_0[2] = 3.3;
+	# Can't assign float to int
+	error;
+	halt;

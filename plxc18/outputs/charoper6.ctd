@@ -1,0 +1,36 @@
+	a_0 = 97;
+	B_0 = 66;
+	x_0 = 55;
+	$t0 = a_0;
+	if (a_0 < 65) goto L0;
+	if ( 122 < a_0) goto L0;
+	if ( 96 < a_0) goto L1;
+	if ( 90 < a_0) goto L0;
+	$t0 = a_0 + 32;
+	goto L0;
+L1:
+	$t0 = a_0 - 32;
+L0:
+	printc $t0;
+	$t1 = B_0;
+	if (B_0 < 65) goto L2;
+	if ( 122 < B_0) goto L2;
+	if ( 96 < B_0) goto L3;
+	if ( 90 < B_0) goto L2;
+	$t1 = B_0 + 32;
+	goto L2;
+L3:
+	$t1 = B_0 - 32;
+L2:
+	printc $t1;
+	$t2 = x_0;
+	if (x_0 < 65) goto L4;
+	if ( 122 < x_0) goto L4;
+	if ( 96 < x_0) goto L5;
+	if ( 90 < x_0) goto L4;
+	$t2 = x_0 + 32;
+	goto L4;
+L5:
+	$t2 = x_0 - 32;
+L4:
+	printc $t2;

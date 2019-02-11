@@ -1,0 +1,4 @@
+	x_0 = 67;
+	# Type Error
+	error;
+	halt;

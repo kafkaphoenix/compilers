@@ -1,0 +1,47 @@
+	$a_length = 10;
+	suma_0 = 0;
+	i_0 = 0;
+L0:
+	if (i_0 < 10) goto L2;
+	goto L3;
+L1:
+	t0 = i_0 + 1;
+	i_0 = t0;
+	goto L0;
+L2:
+	# Comprobacion de rango
+	if (i_0 < 0) goto L4;
+	if (10 < i_0) goto L4;
+	if (10 == i_0) goto L4;
+	goto L5;
+L4:
+	error;
+	halt;
+L5:
+	a_0[i_0] = i_0;
+	# Comprobacion de rango
+	if (i_0 < 0) goto L6;
+	if (10 < i_0) goto L6;
+	if (10 == i_0) goto L6;
+	goto L7;
+L6:
+	error;
+	halt;
+L7:
+	t1 = a_0[i_0];
+	# Comprobacion de rango
+	if (i_0 < 0) goto L8;
+	if (10 < i_0) goto L8;
+	if (10 == i_0) goto L8;
+	goto L9;
+L8:
+	error;
+	halt;
+L9:
+	t2 = a_0[i_0];
+	t3 = t1 * t2;
+	t4 = suma_0 + t3;
+	suma_0 = t4;
+	goto L1;
+L3:
+	print suma_0;

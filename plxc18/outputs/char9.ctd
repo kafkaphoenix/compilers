@@ -1,0 +1,6 @@
+	a_0 = 88;
+	b_0 = 89;
+	c_0 = 90;
+	printc a_0;
+	printc b_0;
+	printc c_0;

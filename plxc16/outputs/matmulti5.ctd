@@ -1,0 +1,43 @@
+	$a_0_length = 3;
+	conta_0 = 0;
+	i_0 = 0;
+L0:
+	if (i_0 < 3) goto L2;
+	goto L3;
+L1:
+	t0 = i_0 + 1;
+	i_0 = t0;
+	goto L0;
+L2:
+	j_0 = 0;
+L4:
+	if (j_0 < 2) goto L6;
+	goto L7;
+L5:
+	t1 = j_0 + 1;
+	j_0 = t1;
+	goto L4;
+L6:
+	k_0 = 0;
+L8:
+	if (k_0 < 5) goto L10;
+	goto L11;
+L9:
+	t2 = k_0 + 1;
+	k_0 = t2;
+	goto L8;
+L10:
+	# syntax error: #2
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	a  |  int  |  0  |  array  |    |  30
+	i  |  int  |  0  |  var  |    |  
+	j  |  int  |  0  |  var  |    |  
+	k  |  int  |  0  |  var  |    |  
+	conta  |  int  |  0  |  var  |    |  
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

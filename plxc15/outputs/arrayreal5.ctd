@@ -1,0 +1,4 @@
+	$x_length = 3;
+	# Type error
+	error;
+	halt;

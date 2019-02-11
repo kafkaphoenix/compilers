@@ -1,0 +1,19 @@
+	$a_0_length = 2;
+	$b_0_length = 3;
+	prod_0 = 1;
+	# syntax error: #42
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	a  |  int  |  0  |  array  |    |  30
+	b  |  int  |  0  |  array  |    |  30
+	suma  |  int  |  0  |  var  |    |  
+	prod  |  int  |  0  |  var  |    |  
+	i  |  int  |  0  |  var  |    |  
+	j  |  int  |  0  |  var  |    |  
+	k  |  int  |  0  |  var  |    |  
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

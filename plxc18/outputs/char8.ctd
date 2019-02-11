@@ -1,0 +1,4 @@
+	a_0 = 48;
+	b_0 = 49;
+	printc a_0;
+	printc b_0;

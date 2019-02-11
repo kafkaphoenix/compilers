@@ -1,0 +1,29 @@
+	$st_0_length = 2;
+	# Comprobacion de rango
+	if (0 < 0) goto L0;
+	if (2 < 0) goto L0;
+	if (2 == 0) goto L0;
+	goto L1;
+L0:
+	error;
+	halt;
+L1:
+	st_0[0] = 65;
+	# Comprobacion de rango
+	if (1 < 0) goto L2;
+	if (2 < 1) goto L2;
+	if (2 == 1) goto L2;
+	goto L3;
+L2:
+	error;
+	halt;
+L3:
+	st_0[1] = 66;
+	$t1 = 0;
+L4:
+	 if(1 < $t1) goto L5;
+	ch_0 = st_0[$t1];
+	$t1 = $t1 + 1;
+	printc ch_0;
+	goto L4;
+L5:

@@ -1,0 +1,54 @@
+	$a_0_length = 3;
+	# Comprobacion de rango
+	if (0 < 0) goto L0;
+	if (3 < 0) goto L0;
+	if (3 == 0) goto L0;
+	goto L1;
+L0:
+	error;
+	halt;
+L1:
+	a_0[0] = 65;
+	# Comprobacion de rango
+	if (1 < 0) goto L2;
+	if (3 < 1) goto L2;
+	if (3 == 1) goto L2;
+	goto L3;
+L2:
+	error;
+	halt;
+L3:
+	a_0[1] = 66;
+	# Comprobacion de rango
+	if (2 < 0) goto L4;
+	if (3 < 2) goto L4;
+	if (3 == 2) goto L4;
+	goto L5;
+L4:
+	error;
+	halt;
+L5:
+	a_0[2] = 67;
+	i_0 = 0;
+L6:
+	if (i_0 < $a_0_length) goto L8;
+	goto L9;
+L7:
+	$t0 = i_0 + 1;
+	i_0 = $t0;
+	goto L6;
+L8:
+	# Comprobacion de rango
+	if (i_0 < 0) goto L10;
+	if (3 < i_0) goto L10;
+	if (3 == i_0) goto L10;
+	goto L11;
+L10:
+	error;
+	halt;
+L11:
+	$t1 = a_0[i_0];
+	printc $t1;
+	goto L7;
+L9:
+	print $a_0_length;

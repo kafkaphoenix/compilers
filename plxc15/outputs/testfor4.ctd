@@ -1,0 +1,14 @@
+	i_0 = 1;
+	t0 = 10 * i_0;
+L0:
+	if (t0 < i_0) goto L5;
+	goto L4;
+L1:
+	i_0 = i_0 + 2;
+	goto L0;
+L4:
+	t1 = suma_0 + i_0;
+	suma_0 = t1;
+	goto L1;
+L5:
+	print suma_0;

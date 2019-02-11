@@ -1,0 +1,10 @@
+	# syntax error: #42
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	a  |  int  |  0  |  array  |    |  6
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

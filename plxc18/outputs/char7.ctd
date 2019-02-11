@@ -1,0 +1,6 @@
+	$t0 = (int) 67;
+	print $t0;
+	$t1 = (int) 241;
+	print $t1;
+	$t2 = (int) 9650;
+	print $t2;

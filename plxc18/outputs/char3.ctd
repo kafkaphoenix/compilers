@@ -1,0 +1,4 @@
+	x_0 = 67;
+	a_0 = x_0;
+	print x_0;
+	printc a_0;

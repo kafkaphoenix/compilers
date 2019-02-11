@@ -1,0 +1,4 @@
+	$m_0_length = 5;
+	# Type Error, Different types
+	error;
+	halt;

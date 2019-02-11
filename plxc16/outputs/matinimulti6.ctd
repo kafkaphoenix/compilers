@@ -1,0 +1,12 @@
+	$a_0_length = 2;
+	# syntax error: #42
+	error;
+# Var
+	ID | Type | Scope | Type | Ptr Level | Size
+	a  |  int  |  0  |  array  |    |  30
+	b  |  int  |  0  |  array  |    |  30
+# End Var
+# Temps
+	ID | Type | Scope | Type | Ptr Level | Size
+# End Var
+	halt;

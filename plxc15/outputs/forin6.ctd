@@ -1,0 +1,100 @@
+	$a_0_length = 3;
+	# Comprobacion de rango
+	if (0 < 0) goto L0;
+	if (3 < 0) goto L0;
+	if (3 == 0) goto L0;
+	goto L1;
+L0:
+	error;
+	halt;
+L1:
+	a_0[0] = 1;
+	# Comprobacion de rango
+	if (1 < 0) goto L2;
+	if (3 < 1) goto L2;
+	if (3 == 1) goto L2;
+	goto L3;
+L2:
+	error;
+	halt;
+L3:
+	a_0[1] = 3;
+	# Comprobacion de rango
+	if (2 < 0) goto L4;
+	if (3 < 2) goto L4;
+	if (3 == 2) goto L4;
+	goto L5;
+L4:
+	error;
+	halt;
+L5:
+	a_0[2] = 5;
+	$b_0_length = 3;
+	i_0 = 0;
+L6:
+	if (i_0 < 3) goto L8;
+	goto L9;
+L7:
+	t0 = i_0;
+	i_0 = i_0 + 1;
+	goto L6;
+L8:
+	t1 = -1;
+L10:
+	t1 = t1 + 1;
+	if (t1 < 3) goto L13;
+	goto L14;
+L13:
+	t2 = a_0[t1];
+	b_0[i_0] = t2;
+	# Comprobacion de rango
+	if (i_0 < 0) goto L15;
+	if (3 < i_0) goto L15;
+	if (3 == i_0) goto L15;
+	goto L16;
+L15:
+	error;
+	halt;
+L16:
+	t3 = b_0[i_0];
+	t4 = x_0 + t3;
+	x_0 = t4;
+	goto L10;
+L14:
+L11:
+	goto L7;
+L9:
+	print x_0;
+	# Comprobacion de rango
+	if (0 < 0) goto L17;
+	if (3 < 0) goto L17;
+	if (3 == 0) goto L17;
+	goto L18;
+L17:
+	error;
+	halt;
+L18:
+	t5 = b_0[0];
+	# Comprobacion de rango
+	if (1 < 0) goto L19;
+	if (3 < 1) goto L19;
+	if (3 == 1) goto L19;
+	goto L20;
+L19:
+	error;
+	halt;
+L20:
+	t6 = b_0[1];
+	t7 = t5 + t6;
+	# Comprobacion de rango
+	if (2 < 0) goto L21;
+	if (3 < 2) goto L21;
+	if (3 == 2) goto L21;
+	goto L22;
+L21:
+	error;
+	halt;
+L22:
+	t8 = b_0[2];
+	t9 = t7 + t8;
+	print t9;

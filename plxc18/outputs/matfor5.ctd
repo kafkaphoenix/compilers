@@ -1,0 +1,47 @@
+	$t0[0] = 0;
+	$t0[1] = 1;
+	$t0[2] = 2;
+	$t1 = $t0[0];
+	m_0[0] = $t1;
+	$t1 = $t0[1];
+	m_0[1] = $t1;
+	$t1 = $t0[2];
+	m_0[2] = $t1;
+	$m_0_length = 3;
+	$t3 = 0;
+L0:
+	 if(2 < $t3) goto L1;
+	i1_0 = m_0[$t3];
+	$t3 = $t3 + 1;
+	$t5 = 0;
+L2:
+	 if(2 < $t5) goto L3;
+	i2_0 = m_0[$t5];
+	$t5 = $t5 + 1;
+	$t7 = 0;
+L4:
+	 if(2 < $t7) goto L5;
+	i3_0 = m_0[$t7];
+	$t7 = $t7 + 1;
+	$t8 = i2_0 + i3_0;
+	$t9 = $t8 / 3;
+	$t10 = $t9 * 3;
+	$t11 = $t8 - $t10;
+	$t12 = i2_0 + i3_0;
+	# Comprobacion de rango
+	if ($t11 < 0) goto L6;
+	if (3 < $t11) goto L6;
+	if (3 == $t11) goto L6;
+	goto L7;
+L6:
+	error;
+	halt;
+L7:
+	m_0[$t11] = $t12;
+	goto L4;
+L5:
+	goto L2;
+L3:
+	print i1_0;
+	goto L0;
+L1:

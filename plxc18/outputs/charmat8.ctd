@@ -1,0 +1,35 @@
+	$a_0_length = 3;
+	i_0 = 0;
+L0:
+	if (i_0 < 5) goto L2;
+	goto L3;
+L1:
+	$t0 = i_0 + 1;
+	i_0 = $t0;
+	goto L0;
+L2:
+	$t1 = i_0 + i_0;
+	$t2 = $t1 / 2;
+	# Comprobacion de rango
+	if ($t2 < 0) goto L4;
+	if (3 < $t2) goto L4;
+	if (3 == $t2) goto L4;
+	goto L5;
+L4:
+	error;
+	halt;
+L5:
+	a_0[$t2] = 88;
+	# Comprobacion de rango
+	if (i_0 < 0) goto L6;
+	if (3 < i_0) goto L6;
+	if (3 == i_0) goto L6;
+	goto L7;
+L6:
+	error;
+	halt;
+L7:
+	$t3 = a_0[i_0];
+	printc $t3;
+	goto L1;
+L3:

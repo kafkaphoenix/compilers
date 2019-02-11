@@ -1,0 +1,14 @@
+	i_0 = 1;
+L0:
+	if (i_0 < 10) goto L2;
+	goto L3;
+L1:
+	t0 = i_0 + 1;
+	i_0 = t0;
+	goto L0;
+L2:
+	t1 = x_0 + i_0;
+	x_0 = t1;
+	goto L1;
+L3:
+	print x_0;

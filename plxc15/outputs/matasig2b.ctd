@@ -1,0 +1,63 @@
+	$a_0_length = 3;
+	$b_0_length = 5;
+	t0[0] = 1;
+	t0[1] = 2;
+	t0[2] = 3;
+	t1 = t0[0];
+	a_0[0] = t1;
+	t1 = t0[1];
+	a_0[1] = t1;
+	t1 = t0[2];
+	a_0[2] = t1;
+	a_0 = t0;
+	t2 = a_0[0];
+	b_0[0] = t2;
+	t2 = a_0[1];
+	b_0[1] = t2;
+	t2 = a_0[2];
+	b_0[2] = t2;
+	b_0 = a_0;
+	# Comprobacion de rango
+	if (3 < 0) goto L0;
+	if (5 < 3) goto L0;
+	if (5 == 3) goto L0;
+	goto L1;
+L0:
+	error;
+	halt;
+L1:
+	b_0[3] = 4;
+	# Comprobacion de rango
+	if (4 < 0) goto L2;
+	if (5 < 4) goto L2;
+	if (5 == 4) goto L2;
+	goto L3;
+L2:
+	error;
+	halt;
+L3:
+	b_0[4] = 5;
+	i_0 = 0;
+L4:
+	if (i_0 < 5) goto L6;
+	goto L7;
+L5:
+	t3 = i_0 + 1;
+	i_0 = t3;
+	goto L4;
+L6:
+	# Comprobacion de rango
+	if (i_0 < 0) goto L8;
+	if (5 < i_0) goto L8;
+	if (5 == i_0) goto L8;
+	goto L9;
+L8:
+	error;
+	halt;
+L9:
+	t4 = b_0[i_0];
+	t5 = suma_0 + t4;
+	suma_0 = t5;
+	goto L5;
+L7:
+	print suma_0;
